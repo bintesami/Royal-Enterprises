@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Trial Balance — Crockery Wholesale Partnership Accounting System{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <div>
+        <h1 class="page-title">Double-Entry Trial Balance</h1>
+        <div class="page-subtitle">Verification of accounting equilibrium: Total Debits must strictly equal Total Credits</div>
+    </div>
+    <div class="d-flex gap-2">
+        <button onclick="window.print()" class="btn btn-outline-secondary d-print-none">
+            <i class="bi bi-printer me-1"></i> Print Trial Balance
+        </button>
+        <a href="{{ url_for('reports.balance_sheet') }}" class="btn btn-primary d-print-none">
+            <i class="bi bi-file-earmark-spreadsheet me-1"></i> Balance Sheet
+        </a>
+    </div>
+</div>
+
+<!-- Balance Status Banner -->
+<div class="mb-4">
+    {% if is_balanced %}
+    <div class="alert alert-success d-flex align-items-center">
+        <i class="bi bi-check-circle-fill fs-3 me-3 text-success"></i>
+        <div>
+            <div class="fw-bold fs-6">Trial Balance is in Perfect Equilibrium</div>
+            <small>Total Debits (PKR {{ "{:,.2f}".format(total_debit) }}) exactly equals Total Credits (PKR {{ "{:,.2f}".format(total_credit) }}). Difference: PKR 0.00.</small>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-warning d-flex align-items-center">
+        <i class="bi bi-exclamation-triangle-fill fs-3 me-3 text-warning"></i>
+        <div>
+            <div class="fw-bold fs-6">Trial Balance Variance Detected</div>
+            <small>Difference between Debits and Credits is PKR {{ "{:,.2f}".format(difference) }}.</small>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Trial Balance Table -->
+<div class="dashboard-card">
+    <div class="dashboard-card-header d-flex justify-content-between align-items-center">
+        <h5>
+            <i class="bi bi-calculator me-2 text-primary"></i>
+            Consolidated Ledger Trial Balance
+        </h5>
+        <span class="badge bg-light text-dark border">Double-Entry Accounting</span>
+    </div>
+    <div class="dashboard-card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width: 50px;">#</th>
+                        <th>Ledger Account / Balance Sheet Head</th>
+                        <th style="width: 140px;">Classification</th>
+                        <th class="text-end text-success" style="width: 170px;">Debit (PKR)</th>
+                        <th class="text-end text-danger" style="width: 170px;">Credit (PKR)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td class="text-muted small font-monospace">{{ loop.index }}</td>
+                        <td class="fw-semibold">{{ item.account }}</td>
+                        <td>
+                            <span class="badge bg-light text-dark border">{{ item.type }}</span>
+                        </td>
+                        <td class="text-end font-monospace text-success fw-bold">
+                            {% if item.debit > 0 %}
+                            {{ CURRENCY }} {{ "{:,.2f}".format(item.debit) }}
+                            {% else %}
+                            —
+                            {% endif %}
+                        </td>
+                        <td class="text-end font-monospace text-danger fw-bold">
+                            {% if item.credit > 0 %}
+                            {{ CURRENCY }} {{ "{:,.2f}".format(item.credit) }}
+                            {% else %}
+                            —
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot class="table-dark fs-6 fw-bold">
+                    <tr>
+                        <td colspan="3" class="text-end">Total Sum:</td>
+                        <td class="text-end font-monospace text-success">{{ CURRENCY }} {{ "{:,.2f}".format(total_debit) }}</td>
+                        <td class="text-end font-monospace text-danger">{{ CURRENCY }} {{ "{:,.2f}".format(total_credit) }}</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block title %}Customers Master — Crockery Wholesale Partnership Accounting System{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Customers Master</h1>
+        <div class="page-subtitle">Manage customer accounts, contact details, and receivable balances</div>
+    </div>
+    <div>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
+            <i class="bi bi-person-plus-fill me-1"></i> Add Customer
+        </button>
+    </div>
+</div>
+
+<!-- Search & Filter -->
+<div class="dashboard-card mb-4">
+    <div class="dashboard-card-body p-3">
+        <form method="GET" class="row g-2 align-items-center">
+            <div class="col-12 col-md-5">
+                <div class="input-group">
+                    <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                    <input type="text" name="search" class="form-control" placeholder="Search by Customer Name..." value="{{ search }}">
+                </div>
+            </div>
+            <div class="col-12 col-md-auto">
+                <button type="submit" class="btn btn-secondary">Filter</button>
+                {% if search %}
+                <a href="{{ url_for('masters.customers_list') }}" class="btn btn-light border">Reset</a>
+                {% endif %}
+            </div>
+            <div class="col text-md-end text-muted small">
+                Showing <strong>{{ customers|length }}</strong> customers
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Customers Table -->
+<div class="dashboard-card">
+    <div class="dashboard-card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Customer Name</th>
+                        <th>Phone</th>
+                        <th>City / Address</th>
+                        <th class="text-end">Opening Balance</th>
+                        <th class="text-end">Current Receivable Balance</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in customers %}
+                    <tr>
+                        <td><strong>{{ c.name }}</strong></td>
+                        <td>{{ c.phone or '-' }}</td>
+                        <td>{{ c.city or c.address or '-' }}</td>
+                        <td class="text-end text-muted">{{ CURRENCY }} {{ "{:,.2f}".format(c.opening_balance) }}</td>
+                        <td class="text-end fw-bold {% if c.current_balance > 0 %}text-success{% else %}text-muted{% endif %}">
+                            {{ CURRENCY }} {{ "{:,.2f}".format(c.current_balance) }}
+                        </td>
+                        <td class="text-center">
+                            <span class="badge bg-success-subtle text-success border border-success">Active</span>
+                        </td>
+                        <td class="text-center">
+                            <a href="{{ url_for('ledgers.customer_ledger', customer_id=c.id) }}" class="btn btn-sm btn-outline-info" title="View Customer Ledger">
+                                <i class="bi bi-journal-text"></i> Ledger
+                            </a>
+                            <button type="button" class="btn btn-sm btn-outline-primary"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editCustomerModal{{ c.id }}"
+                                    title="Edit Customer">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                        </td>
+                    </tr>
+
+                    <!-- Edit Modal -->
+                    <div class="modal fade" id="editCustomerModal{{ c.id }}" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <form method="POST">
+                                    <input type="hidden" name="action" value="edit">
+                                    <input type="hidden" name="customer_id" value="{{ c.id }}">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Edit Customer: {{ c.name }}</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="mb-3">
+                                            <label class="form-label">Customer Name *</label>
+                                            <input type="text" name="name" class="form-control" value="{{ c.name }}" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Phone</label>
+                                            <input type="text" name="phone" class="form-control" value="{{ c.phone or '' }}">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">City</label>
+                                            <input type="text" name="city" class="form-control" value="{{ c.city or '' }}">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Address</label>
+                                            <textarea name="address" class="form-control" rows="2">{{ c.address or '' }}</textarea>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center py-4 text-muted">
+                            <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                            No customers registered yet. Click <strong>"Add Customer"</strong> to create one!
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Add Customer Modal -->
+<div class="modal fade" id="addCustomerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST">
+                <input type="hidden" name="action" value="add">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Customer</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Customer / Store Name *</label>
+                        <input type="text" name="name" class="form-control" placeholder="e.g. Rahim Store, wapda town" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Phone Number</label>
+                        <input type="text" name="phone" class="form-control" placeholder="0300-9876543">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">City</label>
+                        <input type="text" name="city" class="form-control" placeholder="e.g. Lahore, Gujranwala">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Address</label>
+                        <textarea name="address" class="form-control" rows="2" placeholder="Store address / market location"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Opening Balance (PKR)</label>
+                        <input type="number" step="0.01" name="opening_balance" class="form-control" value="0.00">
+                        <small class="text-muted">Enter existing receivable balance if any.</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Customer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

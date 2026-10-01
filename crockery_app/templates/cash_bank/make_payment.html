@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}Make Supplier Payment — Crockery Wholesale Partnership Accounting System{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Make Supplier Payment</h1>
+        <div class="page-subtitle">Record cash or bank payment against supplier payable balance</div>
+    </div>
+    <div>
+        <a href="{{ url_for('cash_bank.cash_bank_book') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Cash Book
+        </a>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-8">
+        <div class="dashboard-card">
+            <div class="dashboard-card-header bg-light">
+                <h5><i class="bi bi-box-arrow-up-right me-2 text-warning"></i>Supplier Payment Voucher</h5>
+            </div>
+            <div class="dashboard-card-body p-4">
+                <form method="POST">
+                    <div class="row g-3 mb-3">
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold">Supplier *</label>
+                            <select name="supplier_id" class="form-select form-select-lg" required id="supplierSelect">
+                                <option value="">-- Select Supplier --</option>
+                                {% for s in suppliers %}
+                                <option value="{{ s.id }}"
+                                        data-balance="{{ s.current_balance }}"
+                                        {% if selected_supplier and selected_supplier.id == s.id %}selected{% endif %}>
+                                    {{ s.name }} (Payable: {{ CURRENCY }} {{ "{:,.2f}".format(s.current_balance) }})
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold">Paid From Account *</label>
+                            <select name="account_id" class="form-select form-select-lg" required>
+                                {% for acc in accounts %}
+                                <option value="{{ acc.id }}">
+                                    {{ acc.account_name }} ({{ acc.account_type }} - {{ CURRENCY }} {{ "{:,.2f}".format(acc.balance) }})
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold">Payment Amount (PKR) *</label>
+                            <input type="number" step="0.01" name="amount" class="form-control form-control-lg text-danger fw-bold" placeholder="0.00" min="0.01" required id="paymentAmount">
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold">Payment Date *</label>
+                            <input type="date" name="date" class="form-control form-control-lg" value="{{ today_date }}" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Reference / Cheque # / Online Ref</label>
+                        <input type="text" name="reference" class="form-control" placeholder="e.g. Chq #98877, Meezan Transfer, Cash Memo">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Notes / Description</label>
+                        <textarea name="notes" class="form-control" rows="2" placeholder="e.g. Part payment towards Bill R-001..."></textarea>
+                    </div>
+
+                    <div class="p-3 bg-light rounded border mb-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-muted">Current Supplier Outstanding:</span>
+                            <span class="fw-bold text-dark fs-6" id="currentBalanceDisplay">
+                                {% if selected_supplier %}PKR {{ "{:,.2f}".format(selected_supplier.current_balance) }}{% else %}PKR 0.00{% endif %}
+                            </span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-2 pt-2 border-top">
+                            <span class="fw-semibold">Remaining Payable After Payment:</span>
+                            <span class="fw-bold text-danger fs-5" id="afterBalanceDisplay">PKR 0.00</span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-warning btn-lg w-100 py-3 fw-bold text-dark">
+                        <i class="bi bi-check-circle-fill me-1"></i> Record Supplier Payment
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const supSelect = document.getElementById("supplierSelect");
+    const amountInput = document.getElementById("paymentAmount");
+    const curBalDisplay = document.getElementById("currentBalanceDisplay");
+    const afterBalDisplay = document.getElementById("afterBalanceDisplay");
+
+    function updatePreview() {
+        const selected = supSelect.options[supSelect.selectedIndex];
+        const bal = selected && selected.value ? parseFloat(selected.getAttribute("data-balance") || 0) : 0;
+        const amount = parseFloat(amountInput.value) || 0;
+        const remaining = Math.max(0, bal - amount);
+
+        curBalDisplay.textContent = "PKR " + bal.toLocaleString("en-PK", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+        afterBalDisplay.textContent = "PKR " + remaining.toLocaleString("en-PK", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+    }
+
+    supSelect.addEventListener("change", updatePreview);
+    amountInput.addEventListener("input", updatePreview);
+    updatePreview();
+});
+</script>
+{% endblock %}

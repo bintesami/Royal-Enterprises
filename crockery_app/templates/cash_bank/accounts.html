@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Cash & Bank Accounts — Crockery Wholesale Partnership Accounting System{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Cash & Bank Accounts</h1>
+        <div class="page-subtitle">Manage physical cash registers and commercial bank accounts</div>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('cash_bank.cash_bank_book') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Cash Book
+        </a>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAccountModal">
+            <i class="bi bi-plus-circle me-1"></i> Add Account
+        </button>
+    </div>
+</div>
+
+<div class="dashboard-card">
+    <div class="dashboard-card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Account Name</th>
+                        <th>Type</th>
+                        <th>Bank / Institution</th>
+                        <th>Account Number</th>
+                        <th class="text-end">Current Balance</th>
+                        <th class="text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for acc in accounts %}
+                    <tr>
+                        <td><strong>{{ acc.account_name }}</strong></td>
+                        <td>
+                            {% if acc.account_type == 'Cash' %}
+                            <span class="badge bg-success-subtle text-success border border-success">Cash</span>
+                            {% else %}
+                            <span class="badge bg-primary-subtle text-primary border border-primary">Bank</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ acc.bank_name or '-' }}</td>
+                        <td class="font-monospace text-muted">{{ acc.account_number or '-' }}</td>
+                        <td class="text-end fw-bold fs-6 {% if acc.balance >= 0 %}text-success{% else %}text-danger{% endif %}">
+                            {{ CURRENCY }} {{ "{:,.2f}".format(acc.balance) }}
+                        </td>
+                        <td class="text-center">
+                            <a href="{{ url_for('cash_bank.cash_bank_book', account_id=acc.id) }}" class="btn btn-sm btn-outline-primary" title="View Account Ledger">
+                                <i class="bi bi-journal-text"></i> Ledger
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center py-4 text-muted">
+                            <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                            No accounts registered. Click <strong>"Add Account"</strong> to create one!
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Add Account Modal -->
+<div class="modal fade" id="addAccountModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Cash / Bank Account</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Account Name *</label>
+                        <input type="text" name="account_name" class="form-control" placeholder="e.g. Meezan Bank Main, Safe Cash" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Account Type *</label>
+                        <select name="account_type" class="form-select" required>
+                            <option value="Bank">Bank Account</option>
+                            <option value="Cash">Cash in Hand / Drawer</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Bank Name</label>
+                        <input type="text" name="bank_name" class="form-control" placeholder="e.g. Meezan Bank, HBL, Bank Alfalah">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Account / IBAN Number</label>
+                        <input type="text" name="account_number" class="form-control font-monospace" placeholder="e.g. 0101-0101234567">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Opening Balance (PKR)</label>
+                        <input type="number" step="0.01" name="opening_balance" class="form-control" value="0.00">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Account</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

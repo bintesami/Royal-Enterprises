@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}Profit & Loss Statement — Crockery Wholesale Partnership Accounting System{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <div>
+        <h1 class="page-title">Profit & Loss Statement (Income Statement)</h1>
+        <div class="page-subtitle">Revenue, Cost of Goods Sold, Operating Overheads, and Net Partnership Profit</div>
+    </div>
+    <div class="d-flex gap-2">
+        <button onclick="window.print()" class="btn btn-outline-secondary d-print-none">
+            <i class="bi bi-printer me-1"></i> Print Statement
+        </button>
+        <a href="{{ url_for('reports.monthly_profit') }}" class="btn btn-primary d-print-none">
+            <i class="bi bi-calendar-check me-1"></i> Monthly Profit Breakdown
+        </a>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-10">
+        <div class="card border shadow-sm p-4 p-md-5 bg-white print-section">
+            <div class="text-center border-bottom pb-4 mb-4">
+                <h3 class="fw-bold text-uppercase mb-1 tracking-wide">{{ BUSINESS_NAME }}</h3>
+                <div class="text-muted small">Crockery Wholesale Partnership Accounting System</div>
+                <div class="badge bg-primary fs-6 mt-2 px-3 py-1 text-uppercase">Statement of Profit & Loss</div>
+            </div>
+
+            <!-- Financial Table -->
+            <table class="table table-bordered align-middle mb-4">
+                <tbody>
+                    <!-- REVENUE -->
+                    <tr class="table-light">
+                        <th colspan="2" class="fs-6 text-uppercase text-primary">1. Operating Revenue</th>
+                    </tr>
+                    <tr>
+                        <td class="ps-4">Gross Wholesale Sales Revenue</td>
+                        <td class="text-end font-monospace fw-bold text-dark fs-6">{{ CURRENCY }} {{ "{:,.2f}".format(total_sales) }}</td>
+                    </tr>
+                    <tr>
+                        <td class="ps-4 text-muted">Less: Cost of Goods Sold (COGS at Purchase Rate)</td>
+                        <td class="text-end font-monospace text-danger">({{ CURRENCY }} {{ "{:,.2f}".format(total_cogs) }})</td>
+                    </tr>
+                    <tr class="table-success fw-bold">
+                        <td class="ps-4">Gross Profit (Margin: {{ "{:,.1f}".format(gross_margin) }}%)</td>
+                        <td class="text-end font-monospace fs-5 text-success">{{ CURRENCY }} {{ "{:,.2f}".format(gross_profit) }}</td>
+                    </tr>
+
+                    <!-- OPERATING EXPENSES -->
+                    <tr class="table-light">
+                        <th colspan="2" class="fs-6 text-uppercase text-danger">2. Operating Expenses</th>
+                    </tr>
+                    {% for cat, amt in cat_expenses %}
+                    <tr>
+                        <td class="ps-4">{{ cat }}</td>
+                        <td class="text-end font-monospace text-muted">{{ CURRENCY }} {{ "{:,.2f}".format(amt) }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td class="ps-4 text-muted fst-italic">No operating expenses recorded.</td>
+                        <td class="text-end font-monospace text-muted">{{ CURRENCY }} 0.00</td>
+                    </tr>
+                    {% endfor %}
+                    <tr class="table-danger fw-bold">
+                        <td class="ps-4">Total Operating Expenses</td>
+                        <td class="text-end font-monospace fs-6 text-danger">({{ CURRENCY }} {{ "{:,.2f}".format(total_expenses) }})</td>
+                    </tr>
+
+                    <!-- NET PROFIT -->
+                    <tr class="table-primary fw-bold fs-5">
+                        <td>Net Partnership Profit (Net Margin: {{ "{:,.1f}".format(net_margin) }}%)</td>
+                        <td class="text-end font-monospace text-primary fs-4">{{ CURRENCY }} {{ "{:,.2f}".format(net_profit) }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Partnership Profit Distribution -->
+            <div class="mt-4 p-3 bg-light rounded border">
+                <h6 class="fw-bold mb-3"><i class="bi bi-people me-2 text-primary"></i>Agreed Partnership Profit Share</h6>
+                <div class="row g-3">
+                    {% for ps in partner_shares %}
+                    <div class="col-12 col-md-6">
+                        <div class="p-3 bg-white rounded border d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="fw-bold">{{ ps.partner.name }}</div>
+                                <small class="text-muted">Share Ratio: {{ "{:g}".format(ps.partner.profit_share_percentage) }}%</small>
+                            </div>
+                            <div class="fs-5 font-monospace fw-bold text-success">
+                                {{ CURRENCY }} {{ "{:,.2f}".format(ps.share) }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

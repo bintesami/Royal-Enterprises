@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block title %}Partner Drawings & Withdrawals — Crockery Wholesale Partnership Accounting System{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <div>
+        <h1 class="page-title">Partner Drawings & Withdrawals</h1>
+        <div class="page-subtitle">Track personal profit and capital withdrawals taken by partners from cash or bank accounts</div>
+    </div>
+    <div class="d-flex gap-2">
+        <button onclick="window.print()" class="btn btn-outline-secondary d-print-none">
+            <i class="bi bi-printer me-1"></i> Print Register
+        </button>
+        <a href="{{ url_for('partners.drawing_new') }}" class="btn btn-warning text-dark">
+            <i class="bi bi-wallet2 me-1"></i> Record New Drawing
+        </a>
+    </div>
+</div>
+
+<!-- Partner Drawings KPI Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-12 col-sm-6 col-xl-4">
+        <div class="kpi-card">
+            <div class="kpi-indicator" style="background-color: #f59e0b;"></div>
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="kpi-label">Total Drawings Recorded</div>
+                    <div class="kpi-value text-warning">{{ CURRENCY }} {{ "{:,.2f}".format(total_drawings) }}</div>
+                </div>
+                <div class="p-2 rounded-circle bg-warning-subtle text-warning">
+                    <i class="bi bi-wallet2 fs-5"></i>
+                </div>
+            </div>
+            <small class="text-muted mt-2 d-block">All-time drawings withdrawn</small>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-4">
+        <div class="kpi-card">
+            <div class="kpi-indicator" style="background-color: #3b82f6;"></div>
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="kpi-label">Drawings Count</div>
+                    <div class="kpi-value text-primary">{{ drawings|length }}</div>
+                </div>
+                <div class="p-2 rounded-circle bg-primary-subtle text-primary">
+                    <i class="bi bi-receipt-cutoff fs-5"></i>
+                </div>
+            </div>
+            <small class="text-muted mt-2 d-block">Number of withdrawal vouchers</small>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-4">
+        <div class="kpi-card">
+            <div class="kpi-indicator" style="background-color: #10b981;"></div>
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="kpi-label">Partners Active</div>
+                    <div class="kpi-value text-success">{{ partners|length }}</div>
+                </div>
+                <div class="p-2 rounded-circle bg-success-subtle text-success">
+                    <i class="bi bi-people-fill fs-5"></i>
+                </div>
+            </div>
+            <small class="text-muted mt-2 d-block">Eligible for drawings</small>
+        </div>
+    </div>
+</div>
+
+<!-- Filters Bar -->
+<div class="dashboard-card mb-4 d-print-none">
+    <div class="dashboard-card-body p-3">
+        <form method="GET" class="row g-2 align-items-center">
+            <div class="col-12 col-md-4">
+                <select name="partner_id" class="form-select" onchange="this.form.submit()">
+                    <option value="">All Partners</option>
+                    {% for p in partners %}
+                    <option value="{{ p.id }}" {% if partner_id == (p.id|string) %}selected{% endif %}>{{ p.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-6 col-md-3">
+                <input type="date" name="start_date" class="form-control" value="{{ start_date }}" title="From Date">
+            </div>
+            <div class="col-6 col-md-3">
+                <input type="date" name="end_date" class="form-control" value="{{ end_date }}" title="To Date">
+            </div>
+            <div class="col-12 col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-secondary w-100">Filter</button>
+                {% if partner_id or start_date or end_date %}
+                <a href="{{ url_for('partners.drawings_list') }}" class="btn btn-outline-secondary" title="Clear Filters">
+                    <i class="bi bi-x-lg"></i>
+                </a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Drawings Register Table (Matching Excel Partner Drawings) -->
+<div class="dashboard-card">
+    <div class="dashboard-card-header d-flex justify-content-between align-items-center">
+        <h5>
+            <i class="bi bi-journal-arrow-up me-2 text-warning"></i>
+            Partner Drawings / Withdrawals Register
+        </h5>
+        <span class="text-muted small">Showing <strong>{{ drawings|length }}</strong> entries</span>
+    </div>
+    <div class="dashboard-card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Date</th>
+                        <th>Voucher No</th>
+                        <th>Partner</th>
+                        <th>Withdrawn From</th>
+                        <th>Description / Purpose</th>
+                        <th>Approved By</th>
+                        <th class="text-end">Amount</th>
+                        <th>Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for d in drawings %}
+                    <tr>
+                        <td class="font-monospace text-muted">{{ d.date.strftime('%d/%m/%Y') }}</td>
+                        <td class="font-monospace text-primary fw-bold">DRW-{{ "%04d"|format(d.id) }}</td>
+                        <td>
+                            <a href="{{ url_for('partners.partner_statement', id=d.partner_id) }}" class="fw-bold text-decoration-none">
+                                {{ d.partner.name if d.partner else 'Partner #' ~ d.partner_id }}
+                            </a>
+                        </td>
+                        <td>
+                            {% if d.account %}
+                            <span class="badge {% if d.account.account_type == 'Cash' %}bg-success-subtle text-success border border-success{% else %}bg-primary-subtle text-primary border border-primary{% endif %}">
+                                {{ d.account.account_name }}
+                            </span>
+                            {% else %}
+                            <span class="badge bg-secondary-subtle text-muted">{{ d.payment_method }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ d.description or 'Personal Withdrawal' }}</td>
+                        <td><span class="badge bg-light text-dark border">{{ d.approved_by or 'Partner Agreed' }}</span></td>
+                        <td class="text-end font-monospace fw-bold text-danger">
+                            {{ CURRENCY }} {{ "{:,.2f}".format(d.amount) }}
+                        </td>
+                        <td class="text-muted small">{{ d.remarks or '—' }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center py-5 text-muted">
+                            <i class="bi bi-wallet2 fs-1 text-muted d-block mb-2"></i>
+                            No partner drawings recorded.
+                            <div class="mt-2">
+                                <a href="{{ url_for('partners.drawing_new') }}" class="btn btn-sm btn-warning text-dark">
+                                    <i class="bi bi-wallet2 me-1"></i> Record First Drawing
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                {% if drawings %}
+                <tfoot class="table-light fw-bold">
+                    <tr>
+                        <td colspan="6" class="text-end">Total Drawings in Selection:</td>
+                        <td class="text-end font-monospace text-danger">
+                            {{ CURRENCY }} {{ "{:,.2f}".format(drawings|sum(attribute='amount')) }}
+                        </td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+                {% endif %}
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

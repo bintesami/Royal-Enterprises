@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+
+{% block title %}Cash & Bank Book — Crockery Wholesale Partnership Accounting System{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Cash & Bank Book</h1>
+        <div class="page-subtitle">Track physical cash-in-hand, bank deposits, withdrawals, and liquidity position</div>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+        <a href="{{ url_for('cash_bank.receive_payment') }}" class="btn btn-success">
+            <i class="bi bi-box-arrow-in-down-right me-1"></i> Receive Payment
+        </a>
+        <a href="{{ url_for('cash_bank.make_payment') }}" class="btn btn-warning text-dark">
+            <i class="bi bi-box-arrow-up-right me-1"></i> Make Payment
+        </a>
+        <a href="{{ url_for('cash_bank.transfer_funds') }}" class="btn btn-primary">
+            <i class="bi bi-arrow-left-right me-1"></i> Transfer Funds
+        </a>
+        <a href="{{ url_for('cash_bank.accounts_list') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-bank me-1"></i> Accounts
+        </a>
+    </div>
+</div>
+
+<!-- Financial Liquidity Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-12 col-sm-6 col-xl-4">
+        <div class="kpi-card">
+            <div class="kpi-indicator indicator-cash"></div>
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="kpi-label">Cash in Hand</div>
+                    <div class="kpi-value text-success">{{ CURRENCY }} {{ "{:,.2f}".format(stats.total_cash) }}</div>
+                </div>
+                <div class="bg-success-subtle text-success p-2 rounded-circle">
+                    <i class="bi bi-cash-stack fs-4"></i>
+                </div>
+            </div>
+            <small class="text-muted mt-2 d-block">Physical cash available in drawer/safe</small>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-4">
+        <div class="kpi-card">
+            <div class="kpi-indicator indicator-bank"></div>
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="kpi-label">Bank Accounts</div>
+                    <div class="kpi-value text-primary">{{ CURRENCY }} {{ "{:,.2f}".format(stats.total_bank) }}</div>
+                </div>
+                <div class="bg-primary-subtle text-primary p-2 rounded-circle">
+                    <i class="bi bi-bank fs-4"></i>
+                </div>
+            </div>
+            <small class="text-muted mt-2 d-block">All active commercial bank balances</small>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-4">
+        <div class="kpi-card">
+            <div class="kpi-indicator indicator-profit"></div>
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="kpi-label">Total Liquid Capital</div>
+                    <div class="kpi-value" style="color: #7c3aed;">{{ CURRENCY }} {{ "{:,.2f}".format(stats.total_liquidity) }}</div>
+                </div>
+                <div class="p-2 rounded-circle" style="background-color: #ede9fe; color: #7c3aed;">
+                    <i class="bi bi-wallet2 fs-4"></i>
+                </div>
+            </div>
+            <small class="text-muted mt-2 d-block">Total Cash + Bank combined funds</small>
+        </div>
+    </div>
+</div>
+
+<!-- Filter Bar -->
+<div class="dashboard-card mb-4">
+    <div class="dashboard-card-body p-3">
+        <form method="GET" class="row g-2 align-items-center">
+            <div class="col-12 col-md-4">
+                <select name="account_id" class="form-select" onchange="this.form.submit()">
+                    <option value="">-- All Accounts (Combined Book) --</option>
+                    {% for acc in accounts %}
+                    <option value="{{ acc.id }}" {% if selected_account and selected_account.id == acc.id %}selected{% endif %}>
+                        {{ acc.account_name }} ({{ acc.account_type }} - {{ CURRENCY }} {{ "{:,.2f}".format(acc.balance) }})
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-12 col-md-3">
+                <select name="type" class="form-select" onchange="this.form.submit()">
+                    <option value="">All Transaction Types</option>
+                    <option value="Customer Receipt" {% if type_filter == 'Customer Receipt' %}selected{% endif %}>Customer Receipt</option>
+                    <option value="Supplier Payment" {% if type_filter == 'Supplier Payment' %}selected{% endif %}>Supplier Payment</option>
+                    <option value="Transfer In" {% if type_filter == 'Transfer In' %}selected{% endif %}>Transfer In</option>
+                    <option value="Transfer Out" {% if type_filter == 'Transfer Out' %}selected{% endif %}>Transfer Out</option>
+                </select>
+            </div>
+            <div class="col-12 col-md-auto">
+                <button type="submit" class="btn btn-secondary">Filter</button>
+                {% if selected_account or type_filter %}
+                <a href="{{ url_for('cash_bank.cash_bank_book') }}" class="btn btn-light border">Reset</a>
+                {% endif %}
+            </div>
+            <div class="col text-md-end text-muted small">
+                Showing <strong>{{ book_entries|length }}</strong> cash & bank entries
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Cash & Bank Book Table (Matching Excel columns) -->
+<div class="dashboard-card">
+    <div class="dashboard-card-header d-flex justify-content-between align-items-center">
+        <h5>
+            <i class="bi bi-journal-check me-2 text-primary"></i>
+            {% if selected_account %}
+            Account: <strong>{{ selected_account.account_name }}</strong>
+            {% else %}
+            Consolidated Cash & Bank Transaction Register
+            {% endif %}
+        </h5>
+        <button onclick="window.print()" class="btn btn-sm btn-outline-secondary d-print-none">
+            <i class="bi bi-printer me-1"></i> Print Book
+        </button>
+    </div>
+    <div class="dashboard-card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Account</th>
+                        <th>Description</th>
+                        <th>Reference</th>
+                        <th class="text-end text-success">Cash In</th>
+                        <th class="text-end text-danger">Cash Out</th>
+                        <th class="text-end text-primary">Bank In</th>
+                        <th class="text-end text-warning">Bank Out</th>
+                        <th class="text-end fw-bold">Balance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in book_entries %}
+                    <tr>
+                        <td class="font-monospace text-muted">{{ row.date.strftime('%d/%m/%Y') }}</td>
+                        <td>
+                            {% if 'Receipt' in row.type or 'In' in row.type %}
+                            <span class="badge bg-success-subtle text-success border border-success">{{ row.type }}</span>
+                            {% elif 'Payment' in row.type or 'Out' in row.type %}
+                            <span class="badge bg-danger-subtle text-danger border border-danger">{{ row.type }}</span>
+                            {% else %}
+                            <span class="badge bg-secondary-subtle text-dark">{{ row.type }}</span>
+                            {% endif %}
+                        </td>
+                        <td><span class="badge bg-light text-dark border">{{ row.account_name }}</span></td>
+                        <td>{{ row.description }}</td>
+                        <td class="font-monospace small text-muted">{{ row.reference }}</td>
+                        <td class="text-end text-success fw-semibold">
+                            {% if row.cash_in > 0 %}{{ CURRENCY }} {{ "{:,.2f}".format(row.cash_in) }}{% else %}-{% endif %}
+                        </td>
+                        <td class="text-end text-danger fw-semibold">
+                            {% if row.cash_out > 0 %}{{ CURRENCY }} {{ "{:,.2f}".format(row.cash_out) }}{% else %}-{% endif %}
+                        </td>
+                        <td class="text-end text-primary fw-semibold">
+                            {% if row.bank_in > 0 %}{{ CURRENCY }} {{ "{:,.2f}".format(row.bank_in) }}{% else %}-{% endif %}
+                        </td>
+                        <td class="text-end text-warning fw-semibold">
+                            {% if row.bank_out > 0 %}{{ CURRENCY }} {{ "{:,.2f}".format(row.bank_out) }}{% else %}-{% endif %}
+                        </td>
+                        <td class="text-end fw-bold text-dark font-monospace">
+                            {{ CURRENCY }} {{ "{:,.2f}".format(row.balance) }}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="10" class="text-center py-4 text-muted">
+                            <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                            No cash or bank transactions recorded yet.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

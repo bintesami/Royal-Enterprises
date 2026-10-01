@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Record Partner Drawing — Crockery Wholesale Partnership Accounting System{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <div>
+        <h1 class="page-title">Record Partner Drawing</h1>
+        <div class="page-subtitle">Withdraw personal funds or profit share from cash or bank accounts</div>
+    </div>
+    <a href="{{ url_for('partners.drawings_list') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i> Back to Drawings
+    </a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-8">
+        <div class="dashboard-card">
+            <div class="dashboard-card-header bg-warning-subtle text-dark border-bottom">
+                <h5 class="mb-0"><i class="bi bi-wallet2 me-2"></i>Partner Drawing Voucher</h5>
+            </div>
+            <div class="dashboard-card-body p-4">
+                <form method="POST">
+                    <div class="row g-3 mb-3">
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold">Select Partner <span class="text-danger">*</span></label>
+                            <select name="partner_id" class="form-select" id="partnerSelect" required onchange="updatePartnerInfo(this)">
+                                <option value="" disabled selected>-- Select Partner --</option>
+                                {% for p in partners %}
+                                <option value="{{ p.id }}" data-balance="{{ p.current_balance or 0.0 }}">
+                                    {{ p.name }} (Current Balance: {{ CURRENCY }} {{ "{:,.2f}".format(p.current_balance or 0.0) }})
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold">Withdrawal Date <span class="text-danger">*</span></label>
+                            <input type="date" name="date" class="form-control" value="{{ today }}" required>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold">Withdraw From Account <span class="text-danger">*</span></label>
+                            <select name="account_id" class="form-select" required>
+                                <option value="" disabled selected>-- Select Cash/Bank Account --</option>
+                                {% for acc in accounts %}
+                                <option value="{{ acc.id }}">
+                                    {{ acc.account_name }} ({{ acc.account_type }}) — Avail: {{ CURRENCY }} {{ "{:,.2f}".format(acc.balance or 0.0) }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold">Drawing Amount (PKR) <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text">{{ CURRENCY }}</span>
+                                <input type="number" step="0.01" min="0.01" name="amount" id="drawingAmount" class="form-control font-monospace fw-bold fs-5 text-danger" placeholder="0.00" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold">Description / Purpose</label>
+                            <input type="text" name="description" class="form-control" placeholder="e.g. Monthly personal household withdrawal">
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold">Approved By</label>
+                            <input type="text" name="approved_by" class="form-control" placeholder="e.g. Mutual Consent, Partner 1">
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Remarks</label>
+                        <textarea name="remarks" class="form-control" rows="2" placeholder="Additional notes, cheque details, or transaction reference..."></textarea>
+                    </div>
+
+                    <div class="alert alert-warning d-flex align-items-center mb-4">
+                        <i class="bi bi-info-circle-fill fs-4 me-3 text-warning"></i>
+                        <div class="small">
+                            <strong>Double-Entry Effect:</strong> Submitting this voucher will deduct the withdrawal amount from the selected Cash or Bank account, create an outflow record in the Cash Book, and reduce the Partner's current balance.
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a href="{{ url_for('partners.drawings_list') }}" class="btn btn-light border">Cancel</a>
+                        <button type="submit" class="btn btn-warning text-dark px-4 fw-semibold">
+                            <i class="bi bi-check2-circle me-1"></i> Save & Disburse Drawing
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

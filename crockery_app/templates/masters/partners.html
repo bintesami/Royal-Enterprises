@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Partners Capital & Profit Share — Crockery Wholesale Partnership Accounting System{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Partners Capital & Profit Sharing</h1>
+        <div class="page-subtitle">Manage business partners, capital balances, and agreed profit distribution ratios</div>
+    </div>
+</div>
+
+<div class="row g-4">
+    {% for p in partners %}
+    <div class="col-12 col-md-6">
+        <div class="dashboard-card h-100">
+            <div class="dashboard-card-header d-flex justify-content-between align-items-center">
+                <h5><i class="bi bi-person-badge me-2 text-primary"></i>{{ p.name }}</h5>
+                <span class="badge bg-primary px-3 py-2 fs-6">Share: {{ "{:g}".format(p.profit_share_percentage) }}%</span>
+            </div>
+            <div class="dashboard-card-body">
+                <form method="POST">
+                    <input type="hidden" name="action" value="update">
+                    <input type="hidden" name="partner_id" value="{{ p.id }}">
+
+                    <div class="mb-3">
+                        <label class="form-label">Partner Name</label>
+                        <input type="text" name="name" class="form-control" value="{{ p.name }}" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Phone / Contact</label>
+                        <input type="text" name="phone" class="form-control" value="{{ p.phone or '' }}" placeholder="Contact number">
+                    </div>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="form-label">Profit Share (%)</label>
+                            <input type="number" step="0.1" name="profit_share" class="form-control" value="{{ p.profit_share_percentage }}" required>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Capital Balance (PKR)</label>
+                            <input type="number" step="0.01" name="capital_balance" class="form-control" value="{{ p.capital_balance }}">
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-light rounded border mb-3">
+                        <div class="d-flex justify-content-between text-muted small">
+                            <span>Current Available Balance:</span>
+                            <strong class="text-dark">{{ CURRENCY }} {{ "{:,.2f}".format(p.current_balance) }}</strong>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-check2-circle me-1"></i> Update Partner Details
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="dashboard-card mt-4">
+    <div class="dashboard-card-header">
+        <h5><i class="bi bi-pie-chart-fill text-info me-2"></i>Profit Sharing Ratio Overview</h5>
+    </div>
+    <div class="dashboard-card-body">
+        <div class="progress" style="height: 25px;">
+            {% for p in partners %}
+            <div class="progress-bar {% if loop.first %}bg-primary{% else %}bg-info{% endif %} fw-bold"
+                 role="progressbar"
+                 style="width: {{ p.profit_share_percentage }}%;"
+                 aria-valuenow="{{ p.profit_share_percentage }}"
+                 aria-valuemin="0"
+                 aria-valuemax="100">
+                {{ p.name }} ({{ "{:g}".format(p.profit_share_percentage) }}%)
+            </div>
+            {% endfor %}
+        </div>
+        <p class="text-muted small mt-2 mb-0">
+            <i class="bi bi-info-circle me-1"></i> Total profit generated in monthly sales will be shared according to these proportions.
+        </p>
+    </div>
+</div>
+{% endblock %}

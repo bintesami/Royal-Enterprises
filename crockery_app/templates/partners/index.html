@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+
+{% block title %}Partners Capital & Profit Share — Crockery Wholesale Partnership Accounting System{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <div>
+        <h1 class="page-title">Partners Capital & Profit Sharing</h1>
+        <div class="page-subtitle">Manage partner capital investments, drawings, profit ratios, and account statements</div>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('partners.capital_new') }}" class="btn btn-primary">
+            <i class="bi bi-cash-coin me-1"></i> Add / Return Capital
+        </a>
+        <a href="{{ url_for('partners.drawing_new') }}" class="btn btn-warning text-dark">
+            <i class="bi bi-wallet2 me-1"></i> Record Drawing
+        </a>
+    </div>
+</div>
+
+<!-- Partnership Capital KPI Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-12 col-sm-6 col-xl-4">
+        <div class="kpi-card">
+            <div class="kpi-indicator" style="background-color: #3b82f6;"></div>
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="kpi-label">Total Capital Pool</div>
+                    <div class="kpi-value text-primary">{{ CURRENCY }} {{ "{:,.2f}".format(total_capital) }}</div>
+                </div>
+                <div class="p-2 rounded-circle bg-primary-subtle text-primary">
+                    <i class="bi bi-people-fill fs-5"></i>
+                </div>
+            </div>
+            <small class="text-muted mt-2 d-block">Net partner equity invested</small>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-4">
+        <div class="kpi-card">
+            <div class="kpi-indicator" style="background-color: #10b981;"></div>
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="kpi-label">Current Available Balance</div>
+                    <div class="kpi-value text-success">{{ CURRENCY }} {{ "{:,.2f}".format(total_current_balance) }}</div>
+                </div>
+                <div class="p-2 rounded-circle bg-success-subtle text-success">
+                    <i class="bi bi-cash-stack fs-5"></i>
+                </div>
+            </div>
+            <small class="text-muted mt-2 d-block">Combined available balance</small>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-4">
+        <div class="kpi-card">
+            <div class="kpi-indicator" style="background-color: #f59e0b;"></div>
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="kpi-label">Total Drawings Taken</div>
+                    <div class="kpi-value text-warning">{{ CURRENCY }} {{ "{:,.2f}".format(total_drawings) }}</div>
+                </div>
+                <div class="p-2 rounded-circle bg-warning-subtle text-warning">
+                    <i class="bi bi-box-arrow-up-right fs-5"></i>
+                </div>
+            </div>
+            <small class="text-muted mt-2 d-block">
+                <a href="{{ url_for('partners.drawings_list') }}" class="text-decoration-none">View Drawings Register &rarr;</a>
+            </small>
+        </div>
+    </div>
+</div>
+
+<!-- Partner Cards -->
+<div class="row g-4 mb-4">
+    {% for p in partners %}
+    <div class="col-12 col-md-6">
+        <div class="dashboard-card h-100">
+            <div class="dashboard-card-header d-flex justify-content-between align-items-center">
+                <h5><i class="bi bi-person-badge me-2 text-primary"></i>{{ p.name }}</h5>
+                <span class="badge bg-primary px-3 py-2 fs-6">Share: {{ "{:g}".format(p.profit_share_percentage) }}%</span>
+            </div>
+            <div class="dashboard-card-body">
+                <div class="row g-2 mb-3">
+                    <div class="col-6">
+                        <div class="p-3 bg-light rounded border text-center">
+                            <div class="text-muted small text-uppercase">Capital Contributed</div>
+                            <div class="fs-4 fw-bold font-monospace text-primary mt-1">
+                                {{ CURRENCY }} {{ "{:,.2f}".format(p.capital_balance or 0.0) }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 bg-light rounded border text-center">
+                            <div class="text-muted small text-uppercase">Current Balance</div>
+                            <div class="fs-4 fw-bold font-monospace text-success mt-1">
+                                {{ CURRENCY }} {{ "{:,.2f}".format(p.current_balance or 0.0) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3 small text-muted">
+                    <div><i class="bi bi-telephone me-1"></i> Phone: <strong>{{ p.phone or 'Not set' }}</strong></div>
+                    {% if p.cnic %}<div><i class="bi bi-card-heading me-1"></i> CNIC: <strong>{{ p.cnic }}</strong></div>{% endif %}
+                    {% if p.address %}<div><i class="bi bi-geo-alt me-1"></i> Address: <strong>{{ p.address }}</strong></div>{% endif %}
+                </div>
+
+                <div class="d-flex gap-2">
+                    <a href="{{ url_for('partners.partner_statement', id=p.id) }}" class="btn btn-outline-primary btn-sm flex-fill">
+                        <i class="bi bi-journal-text me-1"></i> View Account Statement
+                    </a>
+                    <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#editPartnerModal{{ p.id }}">
+                        <i class="bi bi-pencil me-1"></i> Edit
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Partner Modal -->
+    <div class="modal fade" id="editPartnerModal{{ p.id }}" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="POST">
+                    <input type="hidden" name="action" value="update_partner">
+                    <input type="hidden" name="partner_id" value="{{ p.id }}">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Partner: {{ p.name }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Partner Name</label>
+                            <input type="text" name="name" class="form-control" value="{{ p.name }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Phone</label>
+                            <input type="text" name="phone" class="form-control" value="{{ p.phone or '' }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">CNIC</label>
+                            <input type="text" name="cnic" class="form-control" value="{{ p.cnic or '' }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Address</label>
+                            <input type="text" name="address" class="form-control" value="{{ p.address or '' }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Profit Sharing Percentage (%)</label>
+                            <input type="number" step="0.1" name="profit_share" class="form-control" value="{{ p.profit_share_percentage }}" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Profit Sharing Ratio Overview Bar -->
+<div class="dashboard-card mb-4">
+    <div class="dashboard-card-header">
+        <h5><i class="bi bi-pie-chart-fill text-info me-2"></i>Profit Sharing Ratio Overview</h5>
+    </div>
+    <div class="dashboard-card-body">
+        <div class="progress" style="height: 25px;">
+            {% for p in partners %}
+            <div class="progress-bar {% if loop.first %}bg-primary{% else %}bg-info{% endif %} fw-bold"
+                 role="progressbar"
+                 style="width: {{ p.profit_share_percentage }}%;"
+                 aria-valuenow="{{ p.profit_share_percentage }}"
+                 aria-valuemin="0"
+                 aria-valuemax="100">
+                {{ p.name }} ({{ "{:g}".format(p.profit_share_percentage) }}%)
+            </div>
+            {% endfor %}
+        </div>
+        <p class="text-muted small mt-2 mb-0">
+            <i class="bi bi-info-circle me-1"></i> Net monthly profit is distributed according to these agreed partnership percentages.
+        </p>
+    </div>
+</div>
+
+<!-- Recent Capital Transactions Table (Matching Excel Partners Capital) -->
+<div class="dashboard-card">
+    <div class="dashboard-card-header d-flex justify-content-between align-items-center">
+        <h5>
+            <i class="bi bi-clock-history me-2 text-primary"></i>
+            Recent Capital Transactions (Partners Capital Register)
+        </h5>
+        <a href="{{ url_for('partners.capital_new') }}" class="btn btn-sm btn-outline-primary">
+            <i class="bi bi-plus me-1"></i> New Transaction
+        </a>
+    </div>
+    <div class="dashboard-card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Date</th>
+                        <th>Partner</th>
+                        <th>Transaction Type</th>
+                        <th>Description</th>
+                        <th class="text-end text-success">Capital Added</th>
+                        <th class="text-end text-danger">Capital Returned</th>
+                        <th>Reference</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tx in recent_capital_txs %}
+                    <tr>
+                        <td class="font-monospace text-muted">{{ tx.date.strftime('%d/%m/%Y') }}</td>
+                        <td><strong>{{ tx.partner.name if tx.partner else 'Partner #' ~ tx.partner_id }}</strong></td>
+                        <td>
+                            <span class="badge {% if tx.transaction_type in ('Capital Added', 'Opening Capital') %}bg-success-subtle text-success border border-success{% else %}bg-danger-subtle text-danger border border-danger{% endif %}">
+                                {{ tx.transaction_type }}
+                            </span>
+                        </td>
+                        <td>{{ tx.description or '—' }}</td>
+                        <td class="text-end font-monospace text-success fw-bold">
+                            {% if tx.transaction_type in ('Capital Added', 'Opening Capital', 'Profit Share') %}
+                            {{ CURRENCY }} {{ "{:,.2f}".format(tx.amount) }}
+                            {% else %}
+                            —
+                            {% endif %}
+                        </td>
+                        <td class="text-end font-monospace text-danger fw-bold">
+                            {% if tx.transaction_type in ('Capital Returned', 'Capital Withdrawal') %}
+                            {{ CURRENCY }} {{ "{:,.2f}".format(tx.amount) }}
+                            {% else %}
+                            —
+                            {% endif %}
+                        </td>
+                        <td class="text-muted small font-monospace">{{ tx.reference or '—' }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center py-4 text-muted">
+                            No capital transactions recorded yet. Click <strong>Add / Return Capital</strong> to record partnership investment.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

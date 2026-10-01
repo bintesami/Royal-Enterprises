@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}Expense Voucher #{{ expense.expense_no or expense.id }} — Crockery Wholesale Partnership Accounting System{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-2 d-print-none">
+    <div>
+        <h1 class="page-title">Expense Payment Voucher</h1>
+        <div class="page-subtitle">Voucher #{{ expense.expense_no or ('EXP-' ~ "%04d"|format(expense.id)) }}</div>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('expenses.expenses_list') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Back to Register
+        </a>
+        <button onclick="window.print()" class="btn btn-primary">
+            <i class="bi bi-printer me-1"></i> Print Voucher
+        </button>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-12 col-md-9 col-lg-8">
+        <div class="card border shadow-sm p-4 p-md-5 bg-white print-section">
+            <!-- Business Header -->
+            <div class="text-center border-bottom pb-4 mb-4">
+                <h3 class="fw-bold text-uppercase mb-1 tracking-wide">{{ BUSINESS_NAME }}</h3>
+                <div class="text-muted small">Crockery Wholesale & Distribution | Partnership Business</div>
+                <div class="badge bg-danger fs-6 mt-2 px-3 py-1 text-uppercase">Payment Voucher</div>
+            </div>
+
+            <div class="row g-3 mb-4">
+                <div class="col-6">
+                    <div class="text-muted small">Voucher Number:</div>
+                    <div class="fs-5 fw-bold font-monospace text-primary">
+                        {{ expense.expense_no or ('EXP-' ~ "%04d"|format(expense.id)) }}
+                    </div>
+                    {% if expense.reference %}
+                    <div class="text-muted small mt-1">Ref / Bill No: <strong>{{ expense.reference }}</strong></div>
+                    {% endif %}
+                </div>
+                <div class="col-6 text-end">
+                    <div class="text-muted small">Date of Payment:</div>
+                    <div class="fs-5 fw-bold font-monospace">{{ expense.date.strftime('%d-%m-%Y') }}</div>
+                    <div class="text-muted small mt-1">Head: <strong>{{ expense.category }}</strong></div>
+                </div>
+            </div>
+
+            <table class="table table-bordered align-middle mb-4">
+                <thead class="table-light">
+                    <tr>
+                        <th>Particulars / Description</th>
+                        <th>Paid To / Payee</th>
+                        <th>Paid From Account</th>
+                        <th class="text-end">Amount (PKR)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="fw-bold">{{ expense.title }}</div>
+                            <div class="text-muted small">{{ expense.description or 'No additional remarks.' }}</div>
+                        </td>
+                        <td>{{ expense.payee or '—' }}</td>
+                        <td>
+                            {% if expense.account %}
+                            {{ expense.account.account_name }} ({{ expense.account.account_type }})
+                            {% else %}
+                            {{ expense.payment_method }}
+                            {% endif %}
+                        </td>
+                        <td class="text-end fw-bold font-monospace fs-5 text-danger">
+                            {{ CURRENCY }} {{ "{:,.2f}".format(expense.amount) }}
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot class="table-light">
+                    <tr>
+                        <th colspan="3" class="text-end">Net Total Paid:</th>
+                        <th class="text-end font-monospace fs-5 text-danger">
+                            {{ CURRENCY }} {{ "{:,.2f}".format(expense.amount) }}
+                        </th>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <!-- Signatures -->
+            <div class="row pt-5 mt-4 text-center">
+                <div class="col-4">
+                    <div class="border-top pt-2 text-muted small fw-semibold">Prepared By</div>
+                </div>
+                <div class="col-4">
+                    <div class="border-top pt-2 text-muted small fw-semibold">Checked / Verified</div>
+                </div>
+                <div class="col-4">
+                    <div class="border-top pt-2 text-muted small fw-semibold">Partner / Approved By</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

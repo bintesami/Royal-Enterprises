@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Record Partner Capital Transaction — Crockery Wholesale Partnership Accounting System{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <div>
+        <h1 class="page-title">Record Partner Capital Transaction</h1>
+        <div class="page-subtitle">Inject new capital, record initial capital, or return capital to a partner</div>
+    </div>
+    <a href="{{ url_for('partners.partners_list') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i> Back to Partners
+    </a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-8">
+        <div class="dashboard-card">
+            <div class="dashboard-card-header bg-primary-subtle text-primary border-bottom">
+                <h5 class="mb-0"><i class="bi bi-cash-coin me-2"></i>Capital Transaction Voucher</h5>
+            </div>
+            <div class="dashboard-card-body p-4">
+                <form method="POST">
+                    <div class="row g-3 mb-3">
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold">Select Partner <span class="text-danger">*</span></label>
+                            <select name="partner_id" class="form-select" required>
+                                <option value="" disabled selected>-- Select Partner --</option>
+                                {% for p in partners %}
+                                <option value="{{ p.id }}">{{ p.name }} (Current Capital: {{ CURRENCY }} {{ "{:,.2f}".format(p.capital_balance or 0.0) }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold">Transaction Date <span class="text-danger">*</span></label>
+                            <input type="date" name="date" class="form-control" value="{{ today }}" required>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold">Transaction Type <span class="text-danger">*</span></label>
+                            <select name="transaction_type" class="form-select" required>
+                                <option value="Capital Added" selected>Capital Added (Investment / Equity Injection)</option>
+                                <option value="Opening Capital">Opening Capital (Initial Partnership Balance)</option>
+                                <option value="Capital Returned">Capital Returned (Equity Withdrawal / Return to Partner)</option>
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold">Capital Amount (PKR) <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text">{{ CURRENCY }}</span>
+                                <input type="number" step="0.01" min="0.01" name="amount" class="form-control font-monospace fw-bold fs-5 text-primary" placeholder="0.00" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold">Deposit To / Deduct From Account (Optional)</label>
+                            <select name="account_id" class="form-select">
+                                <option value="">-- Direct Equity / No Cash/Bank Impact --</option>
+                                {% for acc in accounts %}
+                                <option value="{{ acc.id }}">
+                                    {{ acc.account_name }} ({{ acc.account_type }}) — Avail: {{ CURRENCY }} {{ "{:,.2f}".format(acc.balance or 0.0) }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <small class="text-muted">If funds are physically placed in shop cash/bank, select the account to adjust balance</small>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold">Reference / Receipt / Cheque No</label>
+                            <input type="text" name="reference" class="form-control" placeholder="e.g. Chq # 48291, Cash deposit">
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Description / Remarks</label>
+                        <textarea name="description" class="form-control" rows="2" placeholder="e.g. Additional investment for inventory procurement"></textarea>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a href="{{ url_for('partners.partners_list') }}" class="btn btn-light border">Cancel</a>
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="bi bi-check2-circle me-1"></i> Save Capital Transaction
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

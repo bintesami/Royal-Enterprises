@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block title %}Account Statement — {{ partner.name }} — Crockery Wholesale Partnership Accounting System{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-2 d-print-none">
+    <div>
+        <h1 class="page-title">{{ partner.name }} — Account Statement</h1>
+        <div class="page-subtitle">Partner Capital, Profit Allocation, Drawings, and Running Net Equity</div>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('partners.partners_list') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Back to Partners
+        </a>
+        <button onclick="window.print()" class="btn btn-primary">
+            <i class="bi bi-printer me-1"></i> Print Statement
+        </button>
+    </div>
+</div>
+
+<!-- Partner Selector & Date Filter (d-print-none) -->
+<div class="dashboard-card mb-4 d-print-none">
+    <div class="dashboard-card-body p-3">
+        <form method="GET" class="row g-2 align-items-center">
+            <div class="col-12 col-md-4">
+                <select class="form-select" onchange="if(this.value) window.location.href='/partners/' + this.value + '/statement';">
+                    {% for p in all_partners %}
+                    <option value="{{ p.id }}" {% if p.id == partner.id %}selected{% endif %}>{{ p.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-6 col-md-3">
+                <input type="date" name="start_date" class="form-control" value="{{ start_date }}" title="From Date">
+            </div>
+            <div class="col-6 col-md-3">
+                <input type="date" name="end_date" class="form-control" value="{{ end_date }}" title="To Date">
+            </div>
+            <div class="col-12 col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-secondary w-100">Filter</button>
+                {% if start_date or end_date %}
+                <a href="{{ url_for('partners.partner_statement', id=partner.id) }}" class="btn btn-outline-secondary">
+                    <i class="bi bi-x-lg"></i>
+                </a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Statement Content (Print Section) -->
+<div class="card border shadow-sm p-4 p-md-5 bg-white print-section">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center border-bottom pb-4 mb-4">
+        <div>
+            <h3 class="fw-bold text-uppercase mb-1 tracking-wide">{{ BUSINESS_NAME }}</h3>
+            <div class="text-muted small">Crockery Wholesale Partnership Accounting System</div>
+            <div class="badge bg-primary fs-6 mt-2 px-3 py-1">Partner Individual Account Statement</div>
+        </div>
+        <div class="text-end">
+            <h5 class="fw-bold text-dark mb-1">{{ partner.name }}</h5>
+            <div class="text-muted small">Profit Share Ratio: <strong>{{ "{:g}".format(partner.profit_share_percentage) }}%</strong></div>
+            {% if partner.phone %}<div class="text-muted small">Phone: {{ partner.phone }}</div>{% endif %}
+            <div class="text-muted small">Generated on: {{ now().strftime('%d-%m-%Y') if now is defined else '' }}</div>
+        </div>
+    </div>
+
+    <!-- Summary Badges -->
+    <div class="row g-3 mb-4">
+        <div class="col-4">
+            <div class="p-3 bg-light rounded border text-center">
+                <div class="text-muted small text-uppercase">Total Inflow (Capital Added / Profit)</div>
+                <div class="fs-5 fw-bold text-success font-monospace mt-1">
+                    {{ CURRENCY }} {{ "{:,.2f}".format(total_credit) }}
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="p-3 bg-light rounded border text-center">
+                <div class="text-muted small text-uppercase">Total Outflow (Drawings / Returned)</div>
+                <div class="fs-5 fw-bold text-danger font-monospace mt-1">
+                    {{ CURRENCY }} {{ "{:,.2f}".format(total_debit) }}
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="p-3 bg-primary-subtle rounded border border-primary text-center">
+                <div class="text-primary small text-uppercase fw-semibold">Net Closing Balance</div>
+                <div class="fs-5 fw-bold text-primary font-monospace mt-1">
+                    {{ CURRENCY }} {{ "{:,.2f}".format(final_balance) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Running Statement Table Matching Excel Partners Capital & Statement -->
+    <div class="table-responsive mb-4">
+        <table class="table table-bordered table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th style="width: 120px;">Date</th>
+                    <th style="width: 150px;">Transaction Type</th>
+                    <th>Particulars / Description</th>
+                    <th style="width: 110px;">Reference</th>
+                    <th class="text-end text-danger" style="width: 140px;">Debit (Drawings)</th>
+                    <th class="text-end text-success" style="width: 140px;">Credit (Capital/Profit)</th>
+                    <th class="text-end text-primary" style="width: 150px;">Running Balance</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for e in entries %}
+                <tr>
+                    <td class="font-monospace text-muted">{{ e.date.strftime('%d/%m/%Y') }}</td>
+                    <td>
+                        <span class="badge {% if e.credit > 0 %}bg-success-subtle text-success border border-success{% else %}bg-warning-subtle text-dark border border-warning{% endif %}">
+                            {{ e.type }}
+                        </span>
+                    </td>
+                    <td>{{ e.description }}</td>
+                    <td class="font-monospace small text-muted">{{ e.reference }}</td>
+                    <td class="text-end font-monospace text-danger fw-semibold">
+                        {% if e.debit > 0 %}
+                        {{ CURRENCY }} {{ "{:,.2f}".format(e.debit) }}
+                        {% else %}
+                        —
+                        {% endif %}
+                    </td>
+                    <td class="text-end font-monospace text-success fw-semibold">
+                        {% if e.credit > 0 %}
+                        {{ CURRENCY }} {{ "{:,.2f}".format(e.credit) }}
+                        {% else %}
+                        —
+                        {% endif %}
+                    </td>
+                    <td class="text-end font-monospace fw-bold {% if e.balance >= 0 %}text-primary{% else %}text-danger{% endif %}">
+                        {{ CURRENCY }} {{ "{:,.2f}".format(e.balance) }}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" class="text-center py-5 text-muted">
+                        No transactions found for this partner in the specified date range.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot class="table-light fw-bold">
+                <tr>
+                    <td colspan="4" class="text-end">Summary Totals:</td>
+                    <td class="text-end font-monospace text-danger">{{ CURRENCY }} {{ "{:,.2f}".format(total_debit) }}</td>
+                    <td class="text-end font-monospace text-success">{{ CURRENCY }} {{ "{:,.2f}".format(total_credit) }}</td>
+                    <td class="text-end font-monospace fs-6 text-primary">{{ CURRENCY }} {{ "{:,.2f}".format(final_balance) }}</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <!-- Signatures (Visible on Print) -->
+    <div class="row pt-5 mt-4 text-center">
+        <div class="col-4">
+            <div class="border-top pt-2 text-muted small fw-semibold">Prepared By</div>
+        </div>
+        <div class="col-4">
+            <div class="border-top pt-2 text-muted small fw-semibold">Accountant</div>
+        </div>
+        <div class="col-4">
+            <div class="border-top pt-2 text-muted small fw-semibold">{{ partner.name }} (Partner Signature)</div>
+        </div>
+    </div>
+</div>
+{% endblock %}

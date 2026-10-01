@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}Balance Sheet — Crockery Wholesale Partnership Accounting System{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <div>
+        <h1 class="page-title">Balance Sheet (Financial Position)</h1>
+        <div class="page-subtitle">Cumulative business assets, liabilities, and net partner equity</div>
+    </div>
+    <div class="d-flex gap-2">
+        <button onclick="window.print()" class="btn btn-outline-secondary d-print-none">
+            <i class="bi bi-printer me-1"></i> Print Balance Sheet
+        </button>
+        <a href="{{ url_for('reports.trial_balance') }}" class="btn btn-primary d-print-none">
+            <i class="bi bi-calculator me-1"></i> Trial Balance
+        </a>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-10">
+        <div class="card border shadow-sm p-4 p-md-5 bg-white print-section">
+            <div class="text-center border-bottom pb-4 mb-4">
+                <h3 class="fw-bold text-uppercase mb-1 tracking-wide">{{ BUSINESS_NAME }}</h3>
+                <div class="text-muted small">Crockery Wholesale Partnership Accounting System</div>
+                <div class="badge bg-primary fs-6 mt-2 px-3 py-1 text-uppercase">Balance Sheet</div>
+            </div>
+
+            <div class="row g-4">
+                <!-- ASSETS (LEFT COLUMN) -->
+                <div class="col-12 col-md-6 border-end-md">
+                    <h5 class="fw-bold text-primary border-bottom pb-2 mb-3">
+                        <i class="bi bi-wallet2 me-2"></i>Assets (Current Assets)
+                    </h5>
+                    <table class="table table-sm align-middle mb-4">
+                        <tbody>
+                            <tr>
+                                <td>Cash in Hand</td>
+                                <td class="text-end font-monospace">{{ CURRENCY }} {{ "{:,.2f}".format(cash_balance) }}</td>
+                            </tr>
+                            <tr>
+                                <td>Bank Accounts</td>
+                                <td class="text-end font-monospace">{{ CURRENCY }} {{ "{:,.2f}".format(bank_balance) }}</td>
+                            </tr>
+                            <tr>
+                                <td>Trade Receivables (Customers)</td>
+                                <td class="text-end font-monospace">{{ CURRENCY }} {{ "{:,.2f}".format(receivables) }}</td>
+                            </tr>
+                            <tr>
+                                <td>Merchandise Inventory (at Cost)</td>
+                                <td class="text-end font-monospace">{{ CURRENCY }} {{ "{:,.2f}".format(inventory) }}</td>
+                            </tr>
+                        </tbody>
+                        <tfoot class="table-primary fw-bold">
+                            <tr>
+                                <td>Total Assets:</td>
+                                <td class="text-end font-monospace fs-6">{{ CURRENCY }} {{ "{:,.2f}".format(total_assets) }}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <!-- LIABILITIES & EQUITY (RIGHT COLUMN) -->
+                <div class="col-12 col-md-6">
+                    <h5 class="fw-bold text-danger border-bottom pb-2 mb-3">
+                        <i class="bi bi-truck me-2"></i>Liabilities (Current)
+                    </h5>
+                    <table class="table table-sm align-middle mb-4">
+                        <tbody>
+                            <tr>
+                                <td>Trade Payables (Suppliers)</td>
+                                <td class="text-end font-monospace">{{ CURRENCY }} {{ "{:,.2f}".format(payables) }}</td>
+                            </tr>
+                        </tbody>
+                        <tfoot class="table-danger fw-bold">
+                            <tr>
+                                <td>Total Liabilities:</td>
+                                <td class="text-end font-monospace">{{ CURRENCY }} {{ "{:,.2f}".format(total_liabilities) }}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <h5 class="fw-bold text-success border-bottom pb-2 mb-3">
+                        <i class="bi bi-people me-2"></i>Partners' Equity
+                    </h5>
+                    <table class="table table-sm align-middle mb-4">
+                        <tbody>
+                            <tr>
+                                <td>Partners Contributed Capital</td>
+                                <td class="text-end font-monospace">{{ CURRENCY }} {{ "{:,.2f}".format(contributed_capital) }}</td>
+                            </tr>
+                            <tr>
+                                <td>Accumulated Net Profit</td>
+                                <td class="text-end font-monospace text-success">{{ CURRENCY }} {{ "{:,.2f}".format(retained_profit) }}</td>
+                            </tr>
+                            <tr>
+                                <td>Less: Partner Drawings</td>
+                                <td class="text-end font-monospace text-danger">({{ CURRENCY }} {{ "{:,.2f}".format(drawings) }})</td>
+                            </tr>
+                        </tbody>
+                        <tfoot class="table-success fw-bold">
+                            <tr>
+                                <td>Total Equity:</td>
+                                <td class="text-end font-monospace">{{ CURRENCY }} {{ "{:,.2f}".format(total_equity) }}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <div class="p-3 bg-light rounded border d-flex justify-content-between align-items-center fw-bold fs-6">
+                        <span>Total Liabilities & Equity:</span>
+                        <span class="font-monospace text-primary">{{ CURRENCY }} {{ "{:,.2f}".format(total_liabilities_and_equity) }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

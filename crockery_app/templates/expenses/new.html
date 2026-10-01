@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}Record New Expense — Crockery Wholesale Partnership Accounting System{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <div>
+        <h1 class="page-title">Record Business Expense</h1>
+        <div class="page-subtitle">Enter expense details to automatically debit overheads and deduct from cash or bank account</div>
+    </div>
+    <a href="{{ url_for('expenses.expenses_list') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i> Back to Expenses
+    </a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-8">
+        <div class="dashboard-card">
+            <div class="dashboard-card-header bg-danger-subtle text-danger border-bottom">
+                <h5 class="mb-0"><i class="bi bi-receipt me-2"></i>Expense Voucher Form</h5>
+            </div>
+            <div class="dashboard-card-body p-4">
+                <form method="POST" id="expenseForm">
+                    <div class="row g-3 mb-3">
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold">Expense Date <span class="text-danger">*</span></label>
+                            <input type="date" name="date" class="form-control" value="{{ today }}" required>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold">Expense Head / Category <span class="text-danger">*</span></label>
+                            <select name="category" class="form-select" id="categorySelect" required onchange="handleCategoryChange(this)">
+                                <option value="" disabled selected>-- Select Expense Head --</option>
+                                {% for cat in all_categories %}
+                                <option value="{{ cat }}">{{ cat }}</option>
+                                {% endfor %}
+                                <option value="__CUSTOM__">+ Custom Expense Category...</option>
+                            </select>
+                            <input type="text" name="custom_category" id="customCategoryInput" class="form-control mt-2 d-none" placeholder="Type custom category name...">
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold">Title / Expense Name <span class="text-danger">*</span></label>
+                            <input type="text" name="title" class="form-control" placeholder="e.g. Shop Rent for Oct 2026" required>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold">Paid To / Payee / Vendor</label>
+                            <input type="text" name="payee" class="form-control" placeholder="e.g. Landlord, Electrician, Carrier">
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold">Expense Amount (PKR) <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text">{{ CURRENCY }}</span>
+                                <input type="number" step="0.01" min="0.01" name="amount" id="amountInput" class="form-control font-monospace fw-bold fs-5 text-danger" placeholder="0.00" required>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold">Paid From Account <span class="text-danger">*</span></label>
+                            <select name="account_id" class="form-select" required id="accountSelect">
+                                <option value="" disabled selected>-- Select Cash/Bank Account --</option>
+                                {% for acc in accounts %}
+                                <option value="{{ acc.id }}">
+                                    {{ acc.account_name }} ({{ acc.account_type }}) — Avail: {{ CURRENCY }} {{ "{:,.2f}".format(acc.balance or 0.0) }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <small class="text-muted">Amount will be immediately deducted from this account</small>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold">Reference / Bill / Receipt No</label>
+                            <input type="text" name="reference" class="form-control" placeholder="e.g. Bill # 5892, Cheque # 10458">
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold">Remarks / Detailed Description</label>
+                            <textarea name="description" class="form-control" rows="2" placeholder="Additional notes, approvals or purpose of expense..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning d-flex align-items-center mb-4">
+                        <i class="bi bi-info-circle-fill fs-4 me-3 text-warning"></i>
+                        <div class="small">
+                            <strong>Double-Entry Posting Effect:</strong> Saving this voucher will record the expense, deduct the specified funds from the chosen Cash/Bank account, log an outflow in the Cash Book, and reflect in the Monthly Profit & Loss calculation.
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a href="{{ url_for('expenses.expenses_list') }}" class="btn btn-light border">Cancel</a>
+                        <button type="submit" class="btn btn-danger px-4">
+                            <i class="bi bi-check2-circle me-1"></i> Save & Post Expense Voucher
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function handleCategoryChange(select) {
+    const customInput = document.getElementById('customCategoryInput');
+    if (select.value === '__CUSTOM__') {
+        customInput.classList.remove('d-none');
+        customInput.required = true;
+        customInput.focus();
+    } else {
+        customInput.classList.add('d-none');
+        customInput.required = false;
+    }
+}
+
+document.getElementById('expenseForm').addEventListener('submit', function(e) {
+    const categorySelect = document.getElementById('categorySelect');
+    const customInput = document.getElementById('customCategoryInput');
+    if (categorySelect.value === '__CUSTOM__') {
+        if (!customInput.value.trim()) {
+            e.preventDefault();
+            alert('Please enter custom category name');
+            customInput.focus();
+            return;
+        }
+        categorySelect.options[categorySelect.selectedIndex].value = customInput.value.trim();
+    }
+});
+</script>
+{% endblock %}

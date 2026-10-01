@@ -1,0 +1,297 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard — Crockery Wholesale Partnership Accounting System{% endblock %}
+
+{% block content %}
+
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Crockery Wholesale Partnership Accounting System</h1>
+        <div class="page-subtitle">Phase 1 Foundation — Excel 11-Module Connected Architecture</div>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+        <span class="badge bg-primary px-3 py-2 fs-6">
+            <i class="bi bi-calendar3 me-1"></i> Phase 1 Active
+        </span>
+    </div>
+</div>
+
+<!-- Quick Actions Toolbar -->
+<div class="dashboard-card mb-4">
+    <div class="dashboard-card-header bg-light">
+        <h5><i class="bi bi-lightning-charge-fill text-warning me-2"></i>Quick Actions</h5>
+    </div>
+    <div class="dashboard-card-body d-flex flex-wrap gap-2">
+        <a href="{{ url_for('purchases.purchase_new') }}" class="btn btn-primary quick-action-btn">
+            <i class="bi bi-cart-plus"></i> New Purchase
+        </a>
+        <a href="{{ url_for('sales.sale_new') }}" class="btn btn-success quick-action-btn">
+            <i class="bi bi-bag-plus"></i> New Sale
+        </a>
+        <a href="{{ url_for('cash_bank.receive_payment') }}" class="btn btn-info text-white quick-action-btn">
+            <i class="bi bi-box-arrow-in-down-right"></i> Receive Payment
+        </a>
+        <a href="{{ url_for('cash_bank.make_payment') }}" class="btn btn-warning text-dark quick-action-btn">
+            <i class="bi bi-box-arrow-up-right"></i> Make Payment
+        </a>
+        <a href="{{ url_for('expenses.expense_new') }}" class="btn btn-outline-danger quick-action-btn">
+            <i class="bi bi-receipt"></i> Add Expense
+        </a>
+    </div>
+</div>
+
+<!-- Financial Summary: 8 Core Metric Cards -->
+<div class="row g-3 mb-4">
+    <!-- Total Sales -->
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="kpi-card">
+            <div class="kpi-indicator indicator-sales"></div>
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="kpi-label">Total Sales</div>
+                    <div class="kpi-value text-primary">{{ CURRENCY }} {{ "{:,.2f}".format(metrics.total_sales) }}</div>
+                </div>
+                <div class="bg-primary-subtle text-primary p-2 rounded-circle">
+                    <i class="bi bi-graph-up fs-5"></i>
+                </div>
+            </div>
+            <small class="text-muted mt-2 d-block">All gross revenue billed</small>
+        </div>
+    </div>
+
+    <!-- Total Purchases -->
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="kpi-card">
+            <div class="kpi-indicator indicator-purchases"></div>
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="kpi-label">Total Purchases</div>
+                    <div class="kpi-value text-indigo" style="color: #6366f1;">{{ CURRENCY }} {{ "{:,.2f}".format(metrics.total_purchases) }}</div>
+                </div>
+                <div class="p-2 rounded-circle" style="background-color: #e0e7ff; color: #6366f1;">
+                    <i class="bi bi-cart3 fs-5"></i>
+                </div>
+            </div>
+            <small class="text-muted mt-2 d-block">Inventory procurement cost</small>
+        </div>
+    </div>
+
+    <!-- Customer Receivable -->
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="kpi-card">
+            <div class="kpi-indicator indicator-receivable"></div>
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="kpi-label">Receivable</div>
+                    <div class="kpi-value text-success">{{ CURRENCY }} {{ "{:,.2f}".format(metrics.receivable) }}</div>
+                </div>
+                <div class="bg-success-subtle text-success p-2 rounded-circle">
+                    <i class="bi bi-arrow-down-left-circle fs-5"></i>
+                </div>
+            </div>
+            <small class="text-muted mt-2 d-block">Pending from customers</small>
+        </div>
+    </div>
+
+    <!-- Supplier Payable -->
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="kpi-card">
+            <div class="kpi-indicator indicator-payable"></div>
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="kpi-label">Payable</div>
+                    <div class="kpi-value text-warning">{{ CURRENCY }} {{ "{:,.2f}".format(metrics.payable) }}</div>
+                </div>
+                <div class="bg-warning-subtle text-warning p-2 rounded-circle">
+                    <i class="bi bi-arrow-up-right-circle fs-5"></i>
+                </div>
+            </div>
+            <small class="text-muted mt-2 d-block">Owed to suppliers</small>
+        </div>
+    </div>
+
+    <!-- Stock Value -->
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="kpi-card">
+            <div class="kpi-indicator indicator-stock"></div>
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="kpi-label">Stock Value</div>
+                    <div class="kpi-value text-info" style="color: #0891b2;">{{ CURRENCY }} {{ "{:,.2f}".format(metrics.stock_value) }}</div>
+                </div>
+                <div class="p-2 rounded-circle" style="background-color: #cffafe; color: #0891b2;">
+                    <i class="bi bi-boxes fs-5"></i>
+                </div>
+            </div>
+            <small class="text-muted mt-2 d-block">Inventory at cost price</small>
+        </div>
+    </div>
+
+    <!-- Cash Balance -->
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="kpi-card">
+            <div class="kpi-indicator indicator-cash"></div>
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="kpi-label">Cash Balance</div>
+                    <div class="kpi-value text-success">{{ CURRENCY }} {{ "{:,.2f}".format(metrics.cash_balance) }}</div>
+                </div>
+                <div class="bg-success-subtle text-success p-2 rounded-circle">
+                    <i class="bi bi-cash-stack fs-5"></i>
+                </div>
+            </div>
+            <small class="text-muted mt-2 d-block">Physical cash on hand</small>
+        </div>
+    </div>
+
+    <!-- Bank Balance -->
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="kpi-card">
+            <div class="kpi-indicator indicator-bank"></div>
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="kpi-label">Bank Balance</div>
+                    <div class="kpi-value text-primary">{{ CURRENCY }} {{ "{:,.2f}".format(metrics.bank_balance) }}</div>
+                </div>
+                <div class="bg-primary-subtle text-primary p-2 rounded-circle">
+                    <i class="bi bi-bank fs-5"></i>
+                </div>
+            </div>
+            <small class="text-muted mt-2 d-block">Bank accounts total</small>
+        </div>
+    </div>
+
+    <!-- Net Profit -->
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="kpi-card">
+            <div class="kpi-indicator indicator-profit"></div>
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="kpi-label">Net Profit</div>
+                    <div class="kpi-value" style="color: #7c3aed;">{{ CURRENCY }} {{ "{:,.2f}".format(metrics.net_profit) }}</div>
+                </div>
+                <div class="p-2 rounded-circle" style="background-color: #ede9fe; color: #7c3aed;">
+                    <i class="bi bi-trophy fs-5"></i>
+                </div>
+            </div>
+            <small class="text-muted mt-2 d-block">Gross Profit minus Expenses</small>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Partners Capital & Profit Share (Excel Original Section) -->
+    <div class="col-12 col-lg-6">
+        <div class="dashboard-card h-100">
+            <div class="dashboard-card-header">
+                <h5><i class="bi bi-people me-2 text-primary"></i>Partners Capital & Profit Share</h5>
+                <span class="badge bg-secondary-subtle text-dark">50% / 50% Share</span>
+            </div>
+            <div class="dashboard-card-body">
+                <div class="vstack gap-3">
+                    {% for partner in partners %}
+                    <div class="partner-badge">
+                        <div>
+                            <div class="partner-name">{{ partner.name }}</div>
+                            <small class="text-muted">Capital: {{ CURRENCY }} {{ "{:,.2f}".format(partner.capital_balance) }} | Balance: {{ CURRENCY }} {{ "{:,.2f}".format(partner.current_balance) }}</small>
+                        </div>
+                        <div class="partner-share">
+                            Profit Share: {{ "{:g}".format(partner.profit_share_percentage) }}%
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-light border text-center my-2">
+                        No partners configured.
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="mt-4 p-3 bg-light rounded border">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="fw-semibold">Total Capital Pool:</span>
+                        <span class="fw-bold text-primary">{{ CURRENCY }} {{ "{:,.2f}".format(metrics.total_capital) }}</span>
+                    </div>
+                    <div class="progress" style="height: 10px;">
+                        <div class="progress-bar bg-primary" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">Partner 1 (50%)</div>
+                        <div class="progress-bar bg-info" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">Partner 2 (50%)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stock Summary Section -->
+    <div class="col-12 col-lg-6">
+        <div class="dashboard-card h-100">
+            <div class="dashboard-card-header">
+                <h5><i class="bi bi-box-seam me-2 text-info"></i>Stock Summary</h5>
+                <span class="badge bg-info-subtle text-info border border-info">Live Inventory</span>
+            </div>
+            <div class="dashboard-card-body">
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="p-3 bg-light rounded border text-center">
+                            <div class="text-muted small text-uppercase">Total Catalog Items</div>
+                            <div class="fs-3 fw-bold text-dark mt-1">{{ metrics.total_products_count }}</div>
+                            <small class="text-muted">Active products</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 bg-light rounded border text-center">
+                            <div class="text-muted small text-uppercase">Low Stock Alert</div>
+                            <div class="fs-3 fw-bold text-danger mt-1">{{ metrics.low_stock_count }}</div>
+                            <small class="text-muted">Below min threshold</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <div class="d-flex justify-content-between text-muted small mb-2">
+                        <span>Inventory Valuation</span>
+                        <span>{{ CURRENCY }} {{ "{:,.2f}".format(metrics.stock_value) }}</span>
+                    </div>
+                    <div class="alert alert-secondary mb-0 py-2 small">
+                        <i class="bi bi-info-circle me-1"></i> Stock records will populate automatically upon recording purchase entries in Phase 2.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Transactions Section -->
+    <div class="col-12">
+        <div class="dashboard-card">
+            <div class="dashboard-card-header">
+                <h5><i class="bi bi-clock-history me-2 text-secondary"></i>Recent Transactions</h5>
+                <span class="badge bg-light text-muted border">Phase 1 Placeholder</span>
+            </div>
+            <div class="dashboard-card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Reference / Party</th>
+                                <th>Description</th>
+                                <th class="text-end">Amount</th>
+                                <th class="text-center">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="6" class="text-center py-4 text-muted">
+                                    <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                                    No transactions recorded yet. Ready for Phase 2 data entry!
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

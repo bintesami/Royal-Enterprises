@@ -1,0 +1,243 @@
+{% extends "base.html" %}
+
+{% block title %}Import Excel Data — Crockery Wholesale Partnership Accounting System{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Import Data from Original Excel</h1>
+        <div class="page-subtitle">Migrate existing products catalog, suppliers, and purchase transactions directly into database</div>
+    </div>
+</div>
+
+<div class="dashboard-card mb-4">
+    <div class="dashboard-card-header d-flex justify-content-between align-items-center">
+        <h5><i class="bi bi-file-earmark-spreadsheet me-2 text-success"></i>Original Excel Workbook Source</h5>
+        {% if file_exists %}
+        <span class="badge bg-success-subtle text-success border border-success px-3 py-2">
+            <i class="bi bi-check-circle me-1"></i> File Detected
+        </span>
+        {% else %}
+        <span class="badge bg-danger-subtle text-danger border border-danger px-3 py-2">
+            <i class="bi bi-x-circle me-1"></i> File Not Found
+        </span>
+        {% endif %}
+    </div>
+    <div class="dashboard-card-body">
+        <p class="mb-2 text-muted">Target Workbook Path:</p>
+        <div class="p-2 bg-light rounded border font-monospace text-dark mb-3">
+            {{ file_path }}
+        </div>
+
+        {% if file_exists %}
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle me-2"></i>
+            Found <strong>{{ preview_products|length }} products</strong> in the Stock register and <strong>{{ preview_purchases|length }} purchase bills</strong> ready for import into the relational database.
+        </div>
+
+        <form method="POST">
+            <input type="hidden" name="action" value="execute_import">
+            <button type="submit" class="btn btn-success btn-lg">
+                <i class="bi bi-cloud-arrow-up-fill me-2"></i> Execute One-Click Import Now
+            </button>
+        </form>
+        {% else %}
+        <div class="alert alert-warning">
+            Please make sure <code>Crockery_Sele_P Ragistaer.xlsx</code> exists at <code>{{ file_path }}</code>.
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% if file_exists %}
+<div class="row g-4">
+    <!-- Products in Excel Stock Sheet Preview -->
+    <div class="col-12 col-lg-6">
+        <div class="dashboard-card h-100">
+            <div class="dashboard-card-header">
+                <h5><i class="bi bi-boxes me-2 text-primary"></i>Products in Excel Stock Sheet ({{ preview_products|length }})</h5>
+            </div>
+            <div class="dashboard-card-body p-0">
+                <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                    <table class="table table-sm table-hover align-middle mb-0">
+                        <thead class="table-light sticky-top">
+                            <tr>
+                                <th>Code</th>
+                                <th>Name</th>
+                                <th>Unit</th>
+                                <th class="text-end">Cost</th>
+                                <th class="text-end">Stock</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for p in preview_products %}
+                            <tr>
+                                <td><span class="badge bg-secondary-subtle text-dark font-monospace">{{ p.code }}</span></td>
+                                <td>{{ p.name }}</td>
+                                <td>{{ p.unit }}</td>
+                                <td class="text-end">{{ CURRENCY }} {{ "{:,.2f}".format(p.cost_rate) }}</td>
+                                <td class="text-end fw-bold">{{ "{:g}".format(p.opening_qty) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Purchases in Excel Sheet Preview -->
+    <div class="col-12 col-lg-6">
+        <div class="dashboard-card h-100">
+            <div class="dashboard-card-header">
+                <h5><i class="bi bi-cart3 me-2 text-primary"></i>Purchases in Excel Sheet ({{ preview_purchases|length }})</h5>
+            </div>
+            <div class="dashboard-card-body p-0">
+                <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                    <table class="table table-sm table-hover align-middle mb-0">
+                        <thead class="table-light sticky-top">
+                            <tr>
+                                <th>Bill No</th>
+                                <th>Supplier</th>
+                                <th>Item</th>
+                                <th class="text-end">Total</th>
+                                <th class="text-end">Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for pur in preview_purchases %}
+                            <tr>
+                                <td class="font-monospace fw-bold">{{ pur.bill_no }}</td>
+                                <td>{{ pur.supplier }}</td>
+                                <td>{{ pur.item }} ({{ "{:g}".format(pur.qty) }})</td>
+                                <td class="text-end">{{ CURRENCY }} {{ "{:,.2f}".format(pur.total) }}</td>
+                                <td class="text-end fw-bold {% if pur.balance > 0 %}text-danger{% else %}text-success{% endif %}">
+                                    {{ CURRENCY }} {{ "{:,.2f}".format(pur.balance) }}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sales in Excel Sheet Preview -->
+    <div class="col-12">
+        <div class="dashboard-card">
+            <div class="dashboard-card-header">
+                <h5><i class="bi bi-bag-check me-2 text-success"></i>Sales in Excel Sheet ({{ preview_sales|length }})</h5>
+            </div>
+            <div class="dashboard-card-body p-0">
+                <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                    <table class="table table-sm table-hover align-middle mb-0">
+                        <thead class="table-light sticky-top">
+                            <tr>
+                                <th>Invoice No</th>
+                                <th>Customer</th>
+                                <th>Item</th>
+                                <th class="text-end">Cost</th>
+                                <th class="text-end">Sale Total</th>
+                                <th class="text-end">Profit</th>
+                                <th class="text-end">Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for sale in preview_sales %}
+                            <tr>
+                                <td class="font-monospace fw-bold">{{ sale.invoice_no }}</td>
+                                <td>{{ sale.customer }}</td>
+                                <td>{{ sale.item }} ({{ "{:g}".format(sale.qty) }})</td>
+                                <td class="text-end text-muted">{{ CURRENCY }} {{ "{:,.2f}".format(sale.cost_total) }}</td>
+                                <td class="text-end fw-bold">{{ CURRENCY }} {{ "{:,.2f}".format(sale.total_sale) }}</td>
+                                <td class="text-end fw-bold text-success">{{ CURRENCY }} {{ "{:,.2f}".format(sale.gross_profit) }}</td>
+                                <td class="text-end fw-bold {% if sale.balance > 0 %}text-danger{% else %}text-muted{% endif %}">
+                                    {{ CURRENCY }} {{ "{:,.2f}".format(sale.balance) }}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    <!-- Partners Capital in Excel Preview -->
+    {% if preview_partner_capitals %}
+    <div class="col-12 col-lg-6">
+        <div class="dashboard-card h-100">
+            <div class="dashboard-card-header">
+                <h5><i class="bi bi-people me-2 text-primary"></i>Partners Capital in Excel ({{ preview_partner_capitals|length }})</h5>
+            </div>
+            <div class="dashboard-card-body p-0">
+                <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                    <table class="table table-sm table-hover align-middle mb-0">
+                        <thead class="table-light sticky-top">
+                            <tr>
+                                <th>Date</th>
+                                <th>Partner</th>
+                                <th>Description</th>
+                                <th class="text-end text-success">Added</th>
+                                <th class="text-end text-danger">Returned</th>
+                                <th class="text-end">Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for c in preview_partner_capitals %}
+                            <tr>
+                                <td class="font-monospace text-muted">{{ c.date }}</td>
+                                <td class="fw-bold">{{ c.partner }}</td>
+                                <td class="small">{{ c.description }}</td>
+                                <td class="text-end text-success font-monospace">{{ "{:,.2f}".format(c.added) if c.added else '—' }}</td>
+                                <td class="text-end text-danger font-monospace">{{ "{:,.2f}".format(c.returned) if c.returned else '—' }}</td>
+                                <td class="text-end font-monospace fw-bold">{{ "{:,.2f}".format(c.balance) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Expenses in Excel Preview -->
+    {% if preview_expenses %}
+    <div class="col-12 col-lg-6">
+        <div class="dashboard-card h-100">
+            <div class="dashboard-card-header">
+                <h5><i class="bi bi-receipt me-2 text-danger"></i>Expenses in Excel ({{ preview_expenses|length }})</h5>
+            </div>
+            <div class="dashboard-card-body p-0">
+                <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                    <table class="table table-sm table-hover align-middle mb-0">
+                        <thead class="table-light sticky-top">
+                            <tr>
+                                <th>Date</th>
+                                <th>Head</th>
+                                <th>Description</th>
+                                <th>Paid By</th>
+                                <th class="text-end">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for exp in preview_expenses %}
+                            <tr>
+                                <td class="font-monospace text-muted">{{ exp.date }}</td>
+                                <td><span class="badge bg-light text-dark border">{{ exp.category }}</span></td>
+                                <td class="small">{{ exp.description }}</td>
+                                <td>{{ exp.paid_by }}</td>
+                                <td class="text-end font-monospace text-danger fw-bold">{{ "{:,.2f}".format(exp.amount) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+
+{% endblock %}

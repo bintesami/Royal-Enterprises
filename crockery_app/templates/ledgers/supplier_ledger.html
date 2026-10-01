@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}Supplier Payable Ledger — Crockery Wholesale Partnership Accounting System{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Supplier Payable Ledger</h1>
+        <div class="page-subtitle">Track wholesale inventory bills, payments made, and running payable liabilities</div>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('purchases.purchase_new') }}" class="btn btn-outline-primary">
+            <i class="bi bi-cart-plus me-1"></i> New Purchase
+        </a>
+        <a href="{{ url_for('cash_bank.make_payment') }}" class="btn btn-warning text-dark">
+            <i class="bi bi-box-arrow-up-right me-1"></i> Make Payment
+        </a>
+    </div>
+</div>
+
+<!-- Supplier Selector & Filter -->
+<div class="dashboard-card mb-4">
+    <div class="dashboard-card-body p-3">
+        <form method="GET" class="row g-2 align-items-center">
+            <div class="col-12 col-md-5">
+                <select name="supplier_id" class="form-select" onchange="this.form.submit()">
+                    <option value="">-- All Suppliers (Consolidated Statement) --</option>
+                    {% for s in suppliers %}
+                    <option value="{{ s.id }}" {% if selected_supplier and selected_supplier.id == s.id %}selected{% endif %}>
+                        {{ s.name }} (Current Balance: {{ CURRENCY }} {{ "{:,.2f}".format(s.current_balance) }})
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-12 col-md-auto">
+                <button type="submit" class="btn btn-secondary">Filter</button>
+                {% if selected_supplier %}
+                <a href="{{ url_for('ledgers.supplier_ledger') }}" class="btn btn-light border">Show All</a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Financial Summary Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-12 col-sm-4">
+        <div class="kpi-card">
+            <div class="kpi-indicator indicator-purchases"></div>
+            <div class="kpi-label">Total Credits (Purchases Billed)</div>
+            <div class="kpi-value text-dark">{{ CURRENCY }} {{ "{:,.2f}".format(total_credit) }}</div>
+            <small class="text-muted mt-2 d-block">All inventory procured from supplier</small>
+        </div>
+    </div>
+    <div class="col-12 col-sm-4">
+        <div class="kpi-card">
+            <div class="kpi-indicator indicator-cash"></div>
+            <div class="kpi-label">Total Debits (Payments Settled)</div>
+            <div class="kpi-value text-success">{{ CURRENCY }} {{ "{:,.2f}".format(total_debit) }}</div>
+            <small class="text-muted mt-2 d-block">Cash and bank payments paid out</small>
+        </div>
+    </div>
+    <div class="col-12 col-sm-4">
+        <div class="kpi-card">
+            <div class="kpi-indicator indicator-payable"></div>
+            <div class="kpi-label">Current Outstanding Payable</div>
+            <div class="kpi-value text-danger">{{ CURRENCY }} {{ "{:,.2f}".format(total_outstanding) }}</div>
+            <small class="text-muted mt-2 d-block">Total net liability owed to supplier</small>
+        </div>
+    </div>
+</div>
+
+<!-- Ledger Transactions Table (Double-Entry Running Balance) -->
+<div class="dashboard-card">
+    <div class="dashboard-card-header d-flex justify-content-between align-items-center">
+        <h5>
+            <i class="bi bi-journal-text me-2 text-primary"></i>
+            {% if selected_supplier %}
+            Ledger Account: <strong>{{ selected_supplier.name }}</strong>
+            {% else %}
+            Consolidated Supplier Running Balance Statement
+            {% endif %}
+        </h5>
+        <button onclick="window.print()" class="btn btn-sm btn-outline-secondary d-print-none">
+            <i class="bi bi-printer me-1"></i> Print Statement
+        </button>
+    </div>
+    <div class="dashboard-card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Date</th>
+                        <th>Supplier</th>
+                        <th>Voucher / Bill #</th>
+                        <th>Description</th>
+                        <th class="text-end text-success">Debit (Payment -)</th>
+                        <th class="text-end text-danger">Credit (Purchase +)</th>
+                        <th class="text-end fw-bold">Running Balance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in ledger_entries %}
+                    <tr>
+                        <td class="font-monospace text-muted">{{ row.date.strftime('%d/%m/%Y') }}</td>
+                        <td><strong>{{ row.supplier_name }}</strong></td>
+                        <td class="font-monospace fw-bold">{{ row.voucher_no }}</td>
+                        <td>{{ row.description }}</td>
+                        <td class="text-end text-success fw-semibold">
+                            {% if row.debit > 0 %}{{ CURRENCY }} {{ "{:,.2f}".format(row.debit) }}{% else %}-{% endif %}
+                        </td>
+                        <td class="text-end text-danger fw-semibold">
+                            {% if row.credit > 0 %}{{ CURRENCY }} {{ "{:,.2f}".format(row.credit) }}{% else %}-{% endif %}
+                        </td>
+                        <td class="text-end fw-bold font-monospace {% if row.balance > 0 %}text-danger{% else %}text-muted{% endif %}">
+                            {{ CURRENCY }} {{ "{:,.2f}".format(row.balance) }}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center py-4 text-muted">
+                            <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                            No ledger transactions recorded yet.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                {% if ledger_entries %}
+                <tfoot class="table-light">
+                    <tr>
+                        <th colspan="4" class="text-end">Total Summary:</th>
+                        <th class="text-end fw-bold text-success">{{ CURRENCY }} {{ "{:,.2f}".format(total_debit) }}</th>
+                        <th class="text-end fw-bold text-danger">{{ CURRENCY }} {{ "{:,.2f}".format(total_credit) }}</th>
+                        <th class="text-end fw-bold text-dark fs-6">{{ CURRENCY }} {{ "{:,.2f}".format(total_outstanding) }}</th>
+                    </tr>
+                </tfoot>
+                {% endif %}
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

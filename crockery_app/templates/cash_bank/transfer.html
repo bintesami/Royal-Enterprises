@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Fund Transfer Between Accounts — Crockery Wholesale Partnership Accounting System{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Inter-Account Fund Transfer</h1>
+        <div class="page-subtitle">Move funds between cash-in-hand and commercial bank accounts</div>
+    </div>
+    <div>
+        <a href="{{ url_for('cash_bank.cash_bank_book') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Cash Book
+        </a>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-8">
+        <div class="dashboard-card">
+            <div class="dashboard-card-header bg-light">
+                <h5><i class="bi bi-arrow-left-right me-2 text-primary"></i>Fund Transfer Voucher</h5>
+            </div>
+            <div class="dashboard-card-body p-4">
+                <form method="POST">
+                    <div class="row g-3 mb-3">
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold">Transfer From Account (Source) *</label>
+                            <select name="from_account_id" class="form-select form-select-lg" required id="fromAccountSelect">
+                                <option value="">-- Select Source Account --</option>
+                                {% for acc in accounts %}
+                                <option value="{{ acc.id }}" data-balance="{{ acc.balance }}">
+                                    {{ acc.account_name }} ({{ acc.account_type }} - {{ CURRENCY }} {{ "{:,.2f}".format(acc.balance) }})
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold">Transfer To Account (Destination) *</label>
+                            <select name="to_account_id" class="form-select form-select-lg" required id="toAccountSelect">
+                                <option value="">-- Select Destination Account --</option>
+                                {% for acc in accounts %}
+                                <option value="{{ acc.id }}" data-balance="{{ acc.balance }}">
+                                    {{ acc.account_name }} ({{ acc.account_type }} - {{ CURRENCY }} {{ "{:,.2f}".format(acc.balance) }})
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold">Transfer Amount (PKR) *</label>
+                            <input type="number" step="0.01" name="amount" class="form-control form-control-lg text-primary fw-bold" placeholder="0.00" min="0.01" required>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold">Transfer Date *</label>
+                            <input type="date" name="date" class="form-control form-control-lg" value="{{ today_date }}" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Reference / Deposit Slip # / Cheque #</label>
+                        <input type="text" name="reference" class="form-control" placeholder="e.g. Bank Deposit Slip #9901, ATM Withdrawal">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Notes / Description</label>
+                        <textarea name="notes" class="form-control" rows="2" placeholder="e.g. Deposited day-end cash sales into bank..."></textarea>
+                    </div>
+
+                    <div class="alert alert-info py-2 small mb-4">
+                        <i class="bi bi-info-circle me-1"></i> Inter-account fund transfers adjust balances between accounts without altering the total cash & bank capital.
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg w-100 py-3 fw-bold">
+                        <i class="bi bi-arrow-left-right me-1"></i> Execute Fund Transfer
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
