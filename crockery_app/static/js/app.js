@@ -20,11 +20,19 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 5000);
     });
 
-    // Formatting helper for currency values if needed
-    window.formatPKR = function (amount) {
-        return "PKR " + Number(amount).toLocaleString("en-PK", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-        });
+    // Mobile Sidebar Drawer Toggle
+    window.toggleSidebar = function () {
+        const sb = document.getElementById("sidebar");
+        const bd = document.getElementById("sidebarBackdrop");
+        if (sb) sb.classList.toggle("show");
+        if (bd) bd.classList.toggle("show");
+    };
+
+    window.closeSidebar = function () {
+        const sb = document.getElementById("sidebar");
+        const bd = document.getElementById("sidebarBackdrop");
+        if (sb) sb.classList.remove("show");
+        if (bd) bd.classList.remove("show");
     };
 });
+

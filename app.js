@@ -70,6 +70,7 @@ function resetSampleData() {
 }
 
 function showTab(tabName) {
+  closeSidebar();
   // Hide all tab panes
   const allPanes = document.querySelectorAll(".tab-pane-custom");
   allPanes.forEach(function (pane) {
@@ -621,3 +622,17 @@ window.addEventListener("DOMContentLoaded", function () {
   renderAll();
   showTab("dashboard");
 });
+
+function toggleSidebar() {
+  const sb = document.getElementById("sidebar");
+  const bd = document.getElementById("sidebarBackdrop");
+  if (sb) sb.classList.toggle("show");
+  if (bd) bd.classList.toggle("show");
+}
+
+function closeSidebar() {
+  const sb = document.getElementById("sidebar");
+  const bd = document.getElementById("sidebarBackdrop");
+  if (sb) sb.classList.remove("show");
+  if (bd) bd.classList.remove("show");
+}

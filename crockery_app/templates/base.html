@@ -19,10 +19,16 @@
 <div class="d-flex min-vh-100">
 
     {% if current_user.is_authenticated %}
-    <aside class="sidebar">
-        <div class="brand">
-            <i class="bi bi-box-seam-fill text-primary"></i>
-            <span>Crockery Accounts</span>
+    <!-- Mobile Backdrop -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="brand d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-box-seam-fill text-primary"></i>
+                <span>Crockery Accounts</span>
+            </div>
+            <button class="btn btn-sm text-secondary d-lg-none p-0" onclick="closeSidebar()"><i class="bi bi-x-lg fs-5"></i></button>
         </div>
 
         <nav class="sidebar-nav">
@@ -148,6 +154,14 @@
     {% endif %}
 
     <main class="main-content {% if not current_user.is_authenticated %}w-100 d-flex flex-column justify-content-center align-items-center{% endif %}">
+        {% if current_user.is_authenticated %}
+        <!-- Mobile Top Bar -->
+        <div class="mobile-top-bar d-lg-none mb-3 p-2 bg-dark rounded d-flex justify-content-between align-items-center text-white">
+            <button class="btn btn-outline-light btn-sm" onclick="toggleSidebar()"><i class="bi bi-list fs-5"></i> Menu</button>
+            <span class="fw-bold">Crockery Accounts</span>
+            <span class="badge bg-primary">{{ current_user.role }}</span>
+        </div>
+        {% endif %}
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 <div class="w-100" style="max-width: {% if current_user.is_authenticated %}100%{% else %}440px{% endif %};">

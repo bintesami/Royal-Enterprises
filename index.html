@@ -10,13 +10,20 @@
 </head>
 <body>
 <div class="d-flex min-vh-100">
-  <aside class="sidebar d-flex flex-column">
-    <div class="sidebar-brand">
-      <i class="bi bi-cup-hot-fill text-warning fs-3"></i>
-      <div>
-        <div class="text-white">Royal Enterprises</div>
-        <small class="text-secondary" style="font-size:0.75rem">Crockery Wholesale</small>
+  <!-- Mobile Backdrop -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar d-flex flex-column" id="sidebar">
+    <div class="sidebar-brand justify-content-between">
+      <div class="d-flex align-items-center gap-2">
+        <i class="bi bi-cup-hot-fill text-warning fs-3"></i>
+        <div>
+          <div class="text-white">Royal Enterprises</div>
+          <small class="text-secondary" style="font-size:0.75rem">Crockery Wholesale</small>
+        </div>
       </div>
+      <button class="btn btn-sm text-secondary d-lg-none" onclick="closeSidebar()"><i class="bi bi-x-lg fs-5"></i></button>
     </div>
     <ul class="sidebar-menu flex-grow-1">
       <li><a class="nav-item-link active" data-tab="dashboard" onclick="showTab('dashboard')"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a></li>
@@ -37,42 +44,50 @@
     </div>
   </aside>
   <main class="main-content">
-    <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+    <!-- Mobile Top Navigation Bar -->
+    <div class="mobile-top-bar d-lg-none mb-3 rounded-2">
+      <button class="btn btn-outline-light btn-sm" onclick="toggleSidebar()"><i class="bi bi-list fs-5"></i> Menu</button>
+      <div class="fw-bold fs-6">Royal Enterprises</div>
+      <button class="btn btn-primary btn-sm" onclick="showTab('sales')"><i class="bi bi-plus-lg"></i> Bill</button>
+    </div>
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom top-header-wrap">
       <div>
         <h3 class="fw-bold mb-0" id="pageTitle">Dashboard Overview</h3>
         <small class="text-muted">Real-Time Crockery Wholesale Accounting & Inventory</small>
       </div>
-      <div class="d-flex gap-2">
-        <button class="btn btn-outline-secondary btn-sm" onclick="resetSampleData()"><i class="bi bi-arrow-counterclockwise"></i> Reset Sample Data</button>
-        <button class="btn btn-primary btn-sm" onclick="showTab('sales')"><i class="bi bi-plus-circle"></i> Create Wholesale Bill</button>
+      <div class="d-flex gap-2 top-header-actions">
+        <button class="btn btn-outline-secondary btn-sm" onclick="resetSampleData()"><i class="bi bi-arrow-counterclockwise"></i> Reset</button>
+        <button class="btn btn-primary btn-sm" onclick="showTab('sales')"><i class="bi bi-plus-circle"></i> Create Bill</button>
       </div>
     </div>
 
     <!-- TAB 1: DASHBOARD -->
     <div id="tab-dashboard" class="tab-pane-custom">
       <div class="row g-3 mb-4">
-        <div class="col-md-3">
+        <div class="col-6 col-md-6 col-xl-3">
           <div class="stat-card">
             <div class="stat-label">Total Sales (Revenue)</div>
             <div class="stat-val text-primary" id="statSales">PKR 0</div>
             <small class="text-muted">Invoiced wholesale sales</small>
           </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-6 col-md-6 col-xl-3">
           <div class="stat-card">
             <div class="stat-label">Gross Profit (Sales - COGS)</div>
             <div class="stat-val text-success" id="statGrossProfit">PKR 0</div>
             <small class="text-success">Perpetual inventory margin</small>
           </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-6 col-md-6 col-xl-3">
           <div class="stat-card">
             <div class="stat-label">Net Profit</div>
             <div class="stat-val text-success" id="statNetProfit">PKR 0</div>
             <small class="text-muted">Gross Profit - Expenses</small>
           </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-6 col-md-6 col-xl-3">
           <div class="stat-card">
             <div class="stat-label">Cash & Bank Balance</div>
             <div class="stat-val text-info" id="statCashBank">PKR 0</div>
@@ -82,28 +97,28 @@
       </div>
 
       <div class="row g-3 mb-4">
-        <div class="col-md-3">
+        <div class="col-6 col-md-6 col-xl-3">
           <div class="stat-card">
             <div class="stat-label">Stock Valuation (at Cost)</div>
             <div class="stat-val" id="statStockVal">PKR 0</div>
             <small class="text-muted">Current inventory value</small>
           </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-6 col-md-6 col-xl-3">
           <div class="stat-card">
             <div class="stat-label">Customer Receivables</div>
             <div class="stat-val text-warning" id="statReceivables">PKR 0</div>
             <small class="text-muted">Market credit balance</small>
           </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-6 col-md-6 col-xl-3">
           <div class="stat-card">
             <div class="stat-label">Supplier Payables</div>
             <div class="stat-val text-danger" id="statPayables">PKR 0</div>
             <small class="text-muted">Pending supplier bills</small>
           </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-6 col-md-6 col-xl-3">
           <div class="stat-card">
             <div class="stat-label">Total Capital Pool</div>
             <div class="stat-val text-secondary" id="statCapitalPool">PKR 0</div>
@@ -206,7 +221,7 @@
         <div class="card-body">
           <form id="purchaseForm" onsubmit="handleNewPurchase(event)">
             <div class="row g-3">
-              <div class="col-md-3">
+              <div class="col-6 col-md-6 col-xl-3">
                 <label class="form-label small fw-bold">Supplier</label>
                 <select class="form-select form-select-sm" id="purSupplier" required>
                   <option value="Royal Crockery Karachi">Royal Crockery Karachi</option>
@@ -214,7 +229,7 @@
                   <option value="China Glassware Importers">China Glassware Importers</option>
                 </select>
               </div>
-              <div class="col-md-3">
+              <div class="col-6 col-md-6 col-xl-3">
                 <label class="form-label small fw-bold">Product</label>
                 <select class="form-select form-select-sm" id="purProduct" onchange="updatePurCostRate()" required></select>
               </div>
@@ -267,7 +282,7 @@
         <div class="card-body">
           <form id="saleForm" onsubmit="handleNewSale(event)">
             <div class="row g-3">
-              <div class="col-md-3">
+              <div class="col-6 col-md-6 col-xl-3">
                 <label class="form-label small fw-bold">Customer</label>
                 <select class="form-select form-select-sm" id="saleCustomer" required>
                   <option value="Haji Crockery Murree">Haji Crockery Murree</option>
@@ -275,7 +290,7 @@
                   <option value="Al-Madina Crockery Store">Al-Madina Crockery Store</option>
                 </select>
               </div>
-              <div class="col-md-3">
+              <div class="col-6 col-md-6 col-xl-3">
                 <label class="form-label small fw-bold">Product</label>
                 <select class="form-select form-select-sm" id="saleProduct" onchange="updateSaleRates()" required></select>
               </div>
@@ -291,11 +306,11 @@
                 <label class="form-label small fw-bold">Total Bill (PKR)</label>
                 <input type="text" class="form-control form-control-sm bg-light" id="saleTotalDisplay" readonly value="PKR 0">
               </div>
-              <div class="col-md-3">
+              <div class="col-6 col-md-6 col-xl-3">
                 <label class="form-label small fw-bold">Received (Cash)</label>
                 <input type="number" class="form-control form-control-sm" id="saleReceived" value="0" oninput="calcSaleTotal()">
               </div>
-              <div class="col-md-3">
+              <div class="col-6 col-md-6 col-xl-3">
                 <label class="form-label small fw-bold">Balance (Credit)</label>
                 <input type="text" class="form-control form-control-sm bg-light" id="saleBalanceDisplay" readonly value="PKR 0">
               </div>
@@ -425,7 +440,7 @@
         <div class="card-body">
           <form id="expenseForm" onsubmit="handleNewExpense(event)">
             <div class="row g-3">
-              <div class="col-md-3">
+              <div class="col-6 col-md-6 col-xl-3">
                 <label class="form-label small fw-bold">Expense Head</label>
                 <select class="form-select form-select-sm" id="expCategory" required>
                   <option value="Shop Rent">Shop Rent</option>
@@ -436,18 +451,18 @@
                   <option value="Packaging Material">Packaging Material</option>
                 </select>
               </div>
-              <div class="col-md-3">
+              <div class="col-6 col-md-6 col-xl-3">
                 <label class="form-label small fw-bold">Paid To / Description</label>
                 <input type="text" class="form-control form-control-sm" id="expDesc" placeholder="e.g. Shop monthly rent" required>
               </div>
-              <div class="col-md-3">
+              <div class="col-6 col-md-6 col-xl-3">
                 <label class="form-label small fw-bold">Account</label>
                 <select class="form-select form-select-sm" id="expAccount">
                   <option value="Cash in Hand">Cash in Hand</option>
                   <option value="Main Bank Account">Main Bank Account</option>
                 </select>
               </div>
-              <div class="col-md-3">
+              <div class="col-6 col-md-6 col-xl-3">
                 <label class="form-label small fw-bold">Amount (PKR)</label>
                 <input type="number" class="form-control form-control-sm" id="expAmount" min="1" required>
               </div>
@@ -536,25 +551,25 @@
         <div class="card-body">
           <form id="drawingForm" onsubmit="handleNewDrawing(event)">
             <div class="row g-3">
-              <div class="col-md-3">
+              <div class="col-6 col-md-6 col-xl-3">
                 <label class="form-label small fw-bold">Partner</label>
                 <select class="form-select form-select-sm" id="drwPartner" required>
                   <option value="Partner 1">Partner 1</option>
                   <option value="Partner 2">Partner 2</option>
                 </select>
               </div>
-              <div class="col-md-3">
+              <div class="col-6 col-md-6 col-xl-3">
                 <label class="form-label small fw-bold">Account</label>
                 <select class="form-select form-select-sm" id="drwAccount">
                   <option value="Cash in Hand">Cash in Hand</option>
                   <option value="Main Bank Account">Main Bank Account</option>
                 </select>
               </div>
-              <div class="col-md-3">
+              <div class="col-6 col-md-6 col-xl-3">
                 <label class="form-label small fw-bold">Remarks</label>
                 <input type="text" class="form-control form-control-sm" id="drwRemarks" placeholder="Household withdrawal" required>
               </div>
-              <div class="col-md-3">
+              <div class="col-6 col-md-6 col-xl-3">
                 <label class="form-label small fw-bold">Amount (PKR)</label>
                 <input type="number" class="form-control form-control-sm" id="drwAmount" min="1" required>
               </div>
