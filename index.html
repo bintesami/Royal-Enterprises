@@ -1,205 +1,125 @@
 <!DOCTYPE html>
-<html lang=en>
+<html lang="en">
 <head>
-  <meta charset=UTF-8>
-  <meta name=viewport content=width=device-width, initial-scale=1.0>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Royal Enterprises - Crockery Wholesale Partnership Accounting</title>
-  <link href=https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css rel=stylesheet>
-  <link rel=stylesheet href=https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css>
-  <style>
-    :root {
-      --primary-navy: #0f172a;
-      --secondary-navy: #1e293b;
-      --accent-blue: #2563eb;
-      --card-bg: #ffffff;
-      --border-color: #e2e8f0;
-      --text-muted: #64748b;
-    }
-    body {
-      background-color: #f8fafc;
-      color: #0f172a;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    }
-    .sidebar {
-      background-color: var(--primary-navy);
-      color: #f8fafc;
-      min-height: 100vh;
-      width: 260px;
-    }
-    .sidebar-brand {
-      padding: 1.25rem;
-      font-size: 1.15rem;
-      font-weight: 700;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-    .sidebar-menu {
-      list-style: none;
-      padding: 0.75rem 0.5rem;
-      margin: 0;
-    }
-    .nav-item-link {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.65rem 0.85rem;
-      color: #94a3b8;
-      text-decoration: none;
-      border-radius: 0.375rem;
-      margin-bottom: 0.25rem;
-      font-weight: 500;
-      font-size: 0.9rem;
-      cursor: pointer;
-    }
-    .nav-item-link:hover, .nav-item-link.active {
-      color: #ffffff;
-      background-color: var(--accent-blue);
-    }
-    .main-content {
-      flex: 1;
-      padding: 1.5rem;
-      overflow-y: auto;
-    }
-    .stat-card {
-      background: #ffffff;
-      border-radius: 0.5rem;
-      border: 1px solid var(--border-color);
-      padding: 1.25rem;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    }
-    .stat-label {
-      font-size: 0.825rem;
-      color: var(--text-muted);
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-    .stat-val {
-      font-size: 1.45rem;
-      font-weight: 700;
-      color: #0f172a;
-      margin-top: 0.25rem;
-    }
-    @media print {
-      .sidebar, .btn, .no-print { display: none !important; }
-      .main-content { padding: 0 !important; }
-    }
-  </style>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class=d-flex>
-  <aside class=sidebar d-flex flex-column>
-    <div class=sidebar-brand>
-      <i class=bi bi-cup-hot-fill text-warning fs-3></i>
+<div class="d-flex min-vh-100">
+  <aside class="sidebar d-flex flex-column">
+    <div class="sidebar-brand">
+      <i class="bi bi-cup-hot-fill text-warning fs-3"></i>
       <div>
-        <div class=text-white>Royal Enterprises</div>
-        <small class=text-secondary style=font-size:0.75rem>Crockery Wholesale</small>
+        <div class="text-white">Royal Enterprises</div>
+        <small class="text-secondary" style="font-size:0.75rem">Crockery Wholesale</small>
       </div>
     </div>
-    <ul class=sidebar-menu flex-grow-1>
-      <li><a class=nav-item-link active onclick=showTab('dashboard')><i class=bi bi-grid-1x2-fill></i> Dashboard</a></li>
-      <li><a class=nav-item-link onclick=showTab('partners')><i class=bi bi-people-fill></i> Partners Capital</a></li>
-      <li><a class=nav-item-link onclick=showTab('purchases')><i class=bi bi-bag-plus-fill></i> Purchases</a></li>
-      <li><a class=nav-item-link onclick=showTab('sales')><i class=bi bi-receipt-cutoff></i> Sales</a></li>
-      <li><a class=nav-item-link onclick=showTab('customer-ledger')><i class=bi bi-person-lines-fill></i> Customer Ledger</a></li>
-      <li><a class=nav-item-link onclick=showTab('supplier-ledger')><i class=bi bi-truck></i> Supplier Ledger</a></li>
-      <li><a class=nav-item-link onclick=showTab('expenses')><i class=bi bi-wallet2></i> Expenses</a></li>
-      <li><a class=nav-item-link onclick=showTab('stock')><i class=bi bi-boxes></i> Stock Inventory</a></li>
-      <li><a class=nav-item-link onclick=showTab('cash-bank')><i class=bi bi-bank2></i> Cash & Bank</a></li>
-      <li><a class=nav-item-link onclick=showTab('drawings')><i class=bi bi-cash-stack></i> Partner Drawings</a></li>
-      <li><a class=nav-item-link onclick=showTab('monthly-profit')><i class=bi bi-graph-up-arrow></i> Monthly Profit</a></li>
+    <ul class="sidebar-menu flex-grow-1">
+      <li><a class="nav-item-link active" data-tab="dashboard" onclick="showTab('dashboard')"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a></li>
+      <li><a class="nav-item-link" data-tab="partners" onclick="showTab('partners')"><i class="bi bi-people-fill"></i> Partners Capital</a></li>
+      <li><a class="nav-item-link" data-tab="purchases" onclick="showTab('purchases')"><i class="bi bi-bag-plus-fill"></i> Purchases</a></li>
+      <li><a class="nav-item-link" data-tab="sales" onclick="showTab('sales')"><i class="bi bi-receipt-cutoff"></i> Sales</a></li>
+      <li><a class="nav-item-link" data-tab="customer-ledger" onclick="showTab('customer-ledger')"><i class="bi bi-person-lines-fill"></i> Customer Ledger</a></li>
+      <li><a class="nav-item-link" data-tab="supplier-ledger" onclick="showTab('supplier-ledger')"><i class="bi bi-truck"></i> Supplier Ledger</a></li>
+      <li><a class="nav-item-link" data-tab="expenses" onclick="showTab('expenses')"><i class="bi bi-wallet2"></i> Expenses</a></li>
+      <li><a class="nav-item-link" data-tab="stock" onclick="showTab('stock')"><i class="bi bi-boxes"></i> Stock Inventory</a></li>
+      <li><a class="nav-item-link" data-tab="cash-bank" onclick="showTab('cash-bank')"><i class="bi bi-bank2"></i> Cash & Bank</a></li>
+      <li><a class="nav-item-link" data-tab="drawings" onclick="showTab('drawings')"><i class="bi bi-cash-stack"></i> Partner Drawings</a></li>
+      <li><a class="nav-item-link" data-tab="monthly-profit" onclick="showTab('monthly-profit')"><i class="bi bi-graph-up-arrow"></i> Monthly Profit</a></li>
     </ul>
-    <div class=p-3 border-top border-secondary text-secondary small>
-      <span class=badge bg-success mb-1>Live Online Demo</span>
+    <div class="p-3 border-top border-secondary text-secondary small">
+      <span class="badge bg-success mb-1">Live Online Demo</span>
       <div>11 Modules Connected</div>
     </div>
   </aside>
-  <main class=main-content>
-    <div class=d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom>
+  <main class="main-content">
+    <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
       <div>
-        <h3 class=fw-bold mb-0 id=pageTitle>Dashboard</h3>
-        <small class=text-muted id=pageSubtitle>Real-Time Crockery Wholesale Accounting Overview</small>
+        <h3 class="fw-bold mb-0" id="pageTitle">Dashboard Overview</h3>
+        <small class="text-muted">Real-Time Crockery Wholesale Accounting & Inventory</small>
       </div>
-      <div class=d-flex gap-2>
-        <button class=btn btn-outline-primary btn-sm onclick=resetSampleData()><i class=bi bi-arrow-counterclockwise></i> Reset Sample Data</button>
-        <button class=btn btn-primary btn-sm onclick=showTab('sales')><i class=bi bi-plus-circle></i> Create Wholesale Bill</button>
+      <div class="d-flex gap-2">
+        <button class="btn btn-outline-secondary btn-sm" onclick="resetSampleData()"><i class="bi bi-arrow-counterclockwise"></i> Reset Sample Data</button>
+        <button class="btn btn-primary btn-sm" onclick="showTab('sales')"><i class="bi bi-plus-circle"></i> Create Wholesale Bill</button>
       </div>
     </div>
 
     <!-- TAB 1: DASHBOARD -->
-    <div id=tab-dashboard class=tab-pane-custom>
-      <div class=row g-3 mb-4>
-        <div class=col-md-3>
-          <div class=stat-card>
-            <div class=stat-label>Total Sales (Revenue)</div>
-            <div class=stat-val text-primary id=statSales>PKR 0</div>
-            <small class=text-muted>Invoiced wholesale sales</small>
+    <div id="tab-dashboard" class="tab-pane-custom">
+      <div class="row g-3 mb-4">
+        <div class="col-md-3">
+          <div class="stat-card">
+            <div class="stat-label">Total Sales (Revenue)</div>
+            <div class="stat-val text-primary" id="statSales">PKR 0</div>
+            <small class="text-muted">Invoiced wholesale sales</small>
           </div>
         </div>
-        <div class=col-md-3>
-          <div class=stat-card>
-            <div class=stat-label>Gross Profit (Sales - COGS)</div>
-            <div class=stat-val text-success id=statGrossProfit>PKR 0</div>
-            <small class=text-success>Perpetual inventory margin</small>
+        <div class="col-md-3">
+          <div class="stat-card">
+            <div class="stat-label">Gross Profit (Sales - COGS)</div>
+            <div class="stat-val text-success" id="statGrossProfit">PKR 0</div>
+            <small class="text-success">Perpetual inventory margin</small>
           </div>
         </div>
-        <div class=col-md-3>
-          <div class=stat-card>
-            <div class=stat-label>Net Profit</div>
-            <div class=stat-val text-success id=statNetProfit>PKR 0</div>
-            <small class=text-muted>Gross Profit - Expenses</small>
+        <div class="col-md-3">
+          <div class="stat-card">
+            <div class="stat-label">Net Profit</div>
+            <div class="stat-val text-success" id="statNetProfit">PKR 0</div>
+            <small class="text-muted">Gross Profit - Expenses</small>
           </div>
         </div>
-        <div class=col-md-3>
-          <div class=stat-card>
-            <div class=stat-label>Cash & Bank Balance</div>
-            <div class=stat-val text-info id=statCashBank>PKR 0</div>
-            <small class=text-muted>Available liquidity</small>
-          </div>
-        </div>
-      </div>
-
-      <div class=row g-3 mb-4>
-        <div class=col-md-3>
-          <div class=stat-card>
-            <div class=stat-label>Stock Valuation (at Cost)</div>
-            <div class=stat-val id=statStockVal>PKR 0</div>
-            <small class=text-muted>Current inventory value</small>
-          </div>
-        </div>
-        <div class=col-md-3>
-          <div class=stat-card>
-            <div class=stat-label>Customer Receivables</div>
-            <div class=stat-val text-warning id=statReceivables>PKR 0</div>
-            <small class=text-muted>Market credit balance</small>
-          </div>
-        </div>
-        <div class=col-md-3>
-          <div class=stat-card>
-            <div class=stat-label>Supplier Payables</div>
-            <div class=stat-val text-danger id=statPayables>PKR 0</div>
-            <small class=text-muted>Pending supplier bills</small>
-          </div>
-        </div>
-        <div class=col-md-3>
-          <div class=stat-card>
-            <div class=stat-label>Total Capital Pool</div>
-            <div class=stat-val text-secondary id=statCapitalPool>PKR 0</div>
-            <small class=text-muted>50/50 Partner Investments</small>
+        <div class="col-md-3">
+          <div class="stat-card">
+            <div class="stat-label">Cash & Bank Balance</div>
+            <div class="stat-val text-info" id="statCashBank">PKR 0</div>
+            <small class="text-muted">Available liquidity</small>
           </div>
         </div>
       </div>
 
-      <div class=row g-3>
-        <div class=col-md-8>
-          <div class=card border-0 shadow-sm>
-            <div class=card-header bg-white fw-bold py-3>Recent Wholesale Invoices</div>
-            <div class=card-body p-0>
-              <div class=table-responsive>
-                <table class=table table-hover align-middle mb-0>
-                  <thead class=table-light small>
+      <div class="row g-3 mb-4">
+        <div class="col-md-3">
+          <div class="stat-card">
+            <div class="stat-label">Stock Valuation (at Cost)</div>
+            <div class="stat-val" id="statStockVal">PKR 0</div>
+            <small class="text-muted">Current inventory value</small>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="stat-card">
+            <div class="stat-label">Customer Receivables</div>
+            <div class="stat-val text-warning" id="statReceivables">PKR 0</div>
+            <small class="text-muted">Market credit balance</small>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="stat-card">
+            <div class="stat-label">Supplier Payables</div>
+            <div class="stat-val text-danger" id="statPayables">PKR 0</div>
+            <small class="text-muted">Pending supplier bills</small>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="stat-card">
+            <div class="stat-label">Total Capital Pool</div>
+            <div class="stat-val text-secondary" id="statCapitalPool">PKR 0</div>
+            <small class="text-muted">50/50 Partner Investments</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-md-8">
+          <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white fw-bold py-3">Recent Wholesale Invoices</div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                  <thead class="table-light small">
                     <tr>
                       <th>Invoice #</th>
                       <th>Customer</th>
@@ -209,36 +129,36 @@
                       <th>Status</th>
                     </tr>
                   </thead>
-                  <tbody id=dashboardRecentSales></tbody>
+                  <tbody id="dashboardRecentSales"></tbody>
                 </table>
               </div>
             </div>
           </div>
         </div>
-        <div class=col-md-4>
-          <div class=card border-0 shadow-sm>
-            <div class=card-header bg-white fw-bold py-3>Partnership 50/50 Split</div>
-            <div class=card-body>
-              <div class=mb-3>
-                <div class=d-flex justify-content-between small fw-bold mb-1>
+        <div class="col-md-4">
+          <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white fw-bold py-3">Partnership 50/50 Split</div>
+            <div class="card-body">
+              <div class="mb-3">
+                <div class="d-flex justify-content-between small fw-bold mb-1">
                   <span>Partner 1 (50%)</span>
-                  <span id=dashP1Share>PKR 0</span>
+                  <span id="dashP1Share">PKR 0</span>
                 </div>
-                <div class=progress style=height: 8px;>
-                  <div class=progress-bar bg-primary style=width: 50%></div>
+                <div class="progress" style="height: 8px;">
+                  <div class="progress-bar bg-primary" style="width: 50%"></div>
                 </div>
               </div>
-              <div class=mb-3>
-                <div class=d-flex justify-content-between small fw-bold mb-1>
+              <div class="mb-3">
+                <div class="d-flex justify-content-between small fw-bold mb-1">
                   <span>Partner 2 (50%)</span>
-                  <span id=dashP2Share>PKR 0</span>
+                  <span id="dashP2Share">PKR 0</span>
                 </div>
-                <div class=progress style=height: 8px;>
-                  <div class=progress-bar bg-info style=width: 50%></div>
+                <div class="progress" style="height: 8px;">
+                  <div class="progress-bar bg-info" style="width: 50%"></div>
                 </div>
               </div>
               <hr>
-              <button class=btn btn-outline-primary btn-sm w-100 onclick=showTab('monthly-profit')><i class=bi bi-eye></i> View Monthly Sharing</button>
+              <button class="btn btn-outline-primary btn-sm w-100" onclick="showTab('monthly-profit')"><i class="bi bi-eye"></i> View Monthly Sharing</button>
             </div>
           </div>
         </div>
@@ -246,33 +166,33 @@
     </div>
 
     <!-- TAB 2: PARTNERS -->
-    <div id=tab-partners class=tab-pane-custom d-none>
-      <div class=row g-3 mb-4>
-        <div class=col-md-6>
-          <div class=card border-0 shadow-sm>
-            <div class=card-body>
-              <div class=d-flex justify-content-between align-items-center mb-2>
-                <h5 class=fw-bold mb-0>Partner 1</h5>
-                <span class=badge bg-primary>50% Share</span>
+    <div id="tab-partners" class="tab-pane-custom">
+      <div class="row g-3 mb-4">
+        <div class="col-md-6">
+          <div class="card border-0 shadow-sm">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="fw-bold mb-0">Partner 1</h5>
+                <span class="badge bg-primary">50% Share</span>
               </div>
-              <div class=stat-label>Capital Contribution</div>
-              <div class=stat-val text-primary mb-2 id=p1Capital>PKR 500,000</div>
-              <div class=stat-label>Current Available Balance</div>
-              <div class=h4 text-success fw-bold id=p1Balance>PKR 500,000</div>
+              <div class="stat-label">Capital Contribution</div>
+              <div class="stat-val text-primary mb-2" id="p1Capital">PKR 500,000</div>
+              <div class="stat-label">Current Available Balance</div>
+              <div class="h4 text-success fw-bold" id="p1Balance">PKR 500,000</div>
             </div>
           </div>
         </div>
-        <div class=col-md-6>
-          <div class=card border-0 shadow-sm>
-            <div class=card-body>
-              <div class=d-flex justify-content-between align-items-center mb-2>
-                <h5 class=fw-bold mb-0>Partner 2</h5>
-                <span class=badge bg-info>50% Share</span>
+        <div class="col-md-6">
+          <div class="card border-0 shadow-sm">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="fw-bold mb-0">Partner 2</h5>
+                <span class="badge bg-info">50% Share</span>
               </div>
-              <div class=stat-label>Capital Contribution</div>
-              <div class=stat-val text-info mb-2 id=p2Capital>PKR 500,000</div>
-              <div class=stat-label>Current Available Balance</div>
-              <div class=h4 text-success fw-bold id=p2Balance>PKR 500,000</div>
+              <div class="stat-label">Capital Contribution</div>
+              <div class="stat-val text-info mb-2" id="p2Capital">PKR 500,000</div>
+              <div class="stat-label">Current Available Balance</div>
+              <div class="h4 text-success fw-bold" id="p2Balance">PKR 500,000</div>
             </div>
           </div>
         </div>
@@ -280,49 +200,49 @@
     </div>
 
     <!-- TAB 3: PURCHASES -->
-    <div id=tab-purchases class=tab-pane-custom d-none>
-      <div class=card border-0 shadow-sm mb-4>
-        <div class=card-header bg-white fw-bold py-3>Record Purchase Invoice (Stock Addition)</div>
-        <div class=card-body>
-          <form id=purchaseForm onsubmit=handleNewPurchase(event)>
-            <div class=row g-3>
-              <div class=col-md-3>
-                <label class=form-label small fw-bold>Supplier</label>
-                <select class=form-select form-select-sm id=purSupplier required>
-                  <option value=Royal Crockery Karachi>Royal Crockery Karachi</option>
-                  <option value=Gujranwala Ceramics Factory>Gujranwala Ceramics Factory</option>
-                  <option value=China Glassware Importers>China Glassware Importers</option>
+    <div id="tab-purchases" class="tab-pane-custom">
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white fw-bold py-3">Record Purchase Invoice (Stock Addition)</div>
+        <div class="card-body">
+          <form id="purchaseForm" onsubmit="handleNewPurchase(event)">
+            <div class="row g-3">
+              <div class="col-md-3">
+                <label class="form-label small fw-bold">Supplier</label>
+                <select class="form-select form-select-sm" id="purSupplier" required>
+                  <option value="Royal Crockery Karachi">Royal Crockery Karachi</option>
+                  <option value="Gujranwala Ceramics Factory">Gujranwala Ceramics Factory</option>
+                  <option value="China Glassware Importers">China Glassware Importers</option>
                 </select>
               </div>
-              <div class=col-md-3>
-                <label class=form-label small fw-bold>Product</label>
-                <select class=form-select form-select-sm id=purProduct onchange=updatePurCostRate() required></select>
+              <div class="col-md-3">
+                <label class="form-label small fw-bold">Product</label>
+                <select class="form-select form-select-sm" id="purProduct" onchange="updatePurCostRate()" required></select>
               </div>
-              <div class=col-md-2>
-                <label class=form-label small fw-bold>Quantity</label>
-                <input type=number class=form-control form-control-sm id=purQty value=10 min=1 oninput=calcPurTotal() required>
+              <div class="col-md-2">
+                <label class="form-label small fw-bold">Quantity</label>
+                <input type="number" class="form-control form-control-sm" id="purQty" value="10" min="1" oninput="calcPurTotal()" required>
               </div>
-              <div class=col-md-2>
-                <label class=form-label small fw-bold>Cost Rate (PKR)</label>
-                <input type=number class=form-control form-control-sm id=purCostRate value=0 oninput=calcPurTotal() required>
+              <div class="col-md-2">
+                <label class="form-label small fw-bold">Cost Rate (PKR)</label>
+                <input type="number" class="form-control form-control-sm" id="purCostRate" value="0" oninput="calcPurTotal()" required>
               </div>
-              <div class=col-md-2>
-                <label class=form-label small fw-bold>Total Amount</label>
-                <input type=text class=form-control form-control-sm bg-light id=purTotalDisplay readonly value=PKR 0>
+              <div class="col-md-2">
+                <label class="form-label small fw-bold">Total Amount</label>
+                <input type="text" class="form-control form-control-sm bg-light" id="purTotalDisplay" readonly value="PKR 0">
               </div>
-              <div class=col-12 text-end>
-                <button type=submit class=btn btn-primary btn-sm><i class=bi bi-check2-circle></i> Save Purchase Invoice</button>
+              <div class="col-12 text-end">
+                <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-check2-circle"></i> Save Purchase Invoice</button>
               </div>
             </div>
           </form>
         </div>
       </div>
-      <div class=card border-0 shadow-sm>
-        <div class=card-header bg-white fw-bold py-3>Purchase Register</div>
-        <div class=card-body p-0>
-          <div class=table-responsive>
-            <table class=table table-hover align-middle mb-0>
-              <thead class=table-light small>
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white fw-bold py-3">Purchase Register</div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light small">
                 <tr>
                   <th>Invoice #</th>
                   <th>Date</th>
@@ -333,7 +253,7 @@
                   <th>Total Amount</th>
                 </tr>
               </thead>
-              <tbody id=purchasesTableBody></tbody>
+              <tbody id="purchasesTableBody"></tbody>
             </table>
           </div>
         </div>
@@ -341,57 +261,57 @@
     </div>
 
     <!-- TAB 4: SALES -->
-    <div id=tab-sales class=tab-pane-custom d-none>
-      <div class=card border-0 shadow-sm mb-4>
-        <div class=card-header bg-white fw-bold py-3>Create Wholesale Sale Invoice</div>
-        <div class=card-body>
-          <form id=saleForm onsubmit=handleNewSale(event)>
-            <div class=row g-3>
-              <div class=col-md-3>
-                <label class=form-label small fw-bold>Customer</label>
-                <select class=form-select form-select-sm id=saleCustomer required>
-                  <option value=Haji Crockery Murree>Haji Crockery Murree</option>
-                  <option value=Bismillah Traders Rawalpindi>Bismillah Traders Rawalpindi</option>
-                  <option value=Al-Madina Crockery Store>Al-Madina Crockery Store</option>
+    <div id="tab-sales" class="tab-pane-custom">
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white fw-bold py-3">Create Wholesale Sale Invoice</div>
+        <div class="card-body">
+          <form id="saleForm" onsubmit="handleNewSale(event)">
+            <div class="row g-3">
+              <div class="col-md-3">
+                <label class="form-label small fw-bold">Customer</label>
+                <select class="form-select form-select-sm" id="saleCustomer" required>
+                  <option value="Haji Crockery Murree">Haji Crockery Murree</option>
+                  <option value="Bismillah Traders Rawalpindi">Bismillah Traders Rawalpindi</option>
+                  <option value="Al-Madina Crockery Store">Al-Madina Crockery Store</option>
                 </select>
               </div>
-              <div class=col-md-3>
-                <label class=form-label small fw-bold>Product</label>
-                <select class=form-select form-select-sm id=saleProduct onchange=updateSaleRates() required></select>
+              <div class="col-md-3">
+                <label class="form-label small fw-bold">Product</label>
+                <select class="form-select form-select-sm" id="saleProduct" onchange="updateSaleRates()" required></select>
               </div>
-              <div class=col-md-2>
-                <label class=form-label small fw-bold>Quantity</label>
-                <input type=number class=form-control form-control-sm id=saleQty value=2 min=1 oninput=calcSaleTotal() required>
+              <div class="col-md-2">
+                <label class="form-label small fw-bold">Quantity</label>
+                <input type="number" class="form-control form-control-sm" id="saleQty" value="2" min="1" oninput="calcSaleTotal()" required>
               </div>
-              <div class=col-md-2>
-                <label class=form-label small fw-bold>Sale Rate (PKR)</label>
-                <input type=number class=form-control form-control-sm id=saleRate value=0 oninput=calcSaleTotal() required>
+              <div class="col-md-2">
+                <label class="form-label small fw-bold">Sale Rate (PKR)</label>
+                <input type="number" class="form-control form-control-sm" id="saleRate" value="0" oninput="calcSaleTotal()" required>
               </div>
-              <div class=col-md-2>
-                <label class=form-label small fw-bold>Total Bill (PKR)</label>
-                <input type=text class=form-control form-control-sm bg-light id=saleTotalDisplay readonly value=PKR 0>
+              <div class="col-md-2">
+                <label class="form-label small fw-bold">Total Bill (PKR)</label>
+                <input type="text" class="form-control form-control-sm bg-light" id="saleTotalDisplay" readonly value="PKR 0">
               </div>
-              <div class=col-md-3>
-                <label class=form-label small fw-bold>Received (Cash)</label>
-                <input type=number class=form-control form-control-sm id=saleReceived value=0 oninput=calcSaleTotal()>
+              <div class="col-md-3">
+                <label class="form-label small fw-bold">Received (Cash)</label>
+                <input type="number" class="form-control form-control-sm" id="saleReceived" value="0" oninput="calcSaleTotal()">
               </div>
-              <div class=col-md-3>
-                <label class=form-label small fw-bold>Balance (Credit)</label>
-                <input type=text class=form-control form-control-sm bg-light id=saleBalanceDisplay readonly value=PKR 0>
+              <div class="col-md-3">
+                <label class="form-label small fw-bold">Balance (Credit)</label>
+                <input type="text" class="form-control form-control-sm bg-light" id="saleBalanceDisplay" readonly value="PKR 0">
               </div>
-              <div class=col-md-6 text-end d-flex align-items-end justify-content-end>
-                <button type=submit class=btn btn-success btn-sm><i class=bi bi-printer></i> Save & Generate Wholesale Invoice</button>
+              <div class="col-md-6 text-end d-flex align-items-end justify-content-end">
+                <button type="submit" class="btn btn-success btn-sm"><i class="bi bi-printer"></i> Save & Generate Wholesale Invoice</button>
               </div>
             </div>
           </form>
         </div>
       </div>
-      <div class=card border-0 shadow-sm>
-        <div class=card-header bg-white fw-bold py-3>Sales Register</div>
-        <div class=card-body p-0>
-          <div class=table-responsive>
-            <table class=table table-hover align-middle mb-0>
-              <thead class=table-light small>
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white fw-bold py-3">Sales Register</div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light small">
                 <tr>
                   <th>Invoice #</th>
                   <th>Customer</th>
@@ -405,7 +325,7 @@
                   <th>Action</th>
                 </tr>
               </thead>
-              <tbody id=salesTableBody></tbody>
+              <tbody id="salesTableBody"></tbody>
             </table>
           </div>
         </div>
@@ -413,33 +333,33 @@
     </div>
 
     <!-- TAB 5: CUSTOMER LEDGER -->
-    <div id=tab-customer-ledger class=tab-pane-custom d-none>
-      <div class=card border-0 shadow-sm mb-4>
-        <div class=card-body>
-          <div class=row align-items-center>
-            <div class=col-md-4>
-              <label class=form-label small fw-bold>Select Customer</label>
-              <select class=form-select form-select-sm id=ledgerCustomerSelect onchange=renderCustomerLedger()>
-                <option value=Haji Crockery Murree>Haji Crockery Murree</option>
-                <option value=Bismillah Traders Rawalpindi>Bismillah Traders Rawalpindi</option>
-                <option value=Al-Madina Crockery Store>Al-Madina Crockery Store</option>
+    <div id="tab-customer-ledger" class="tab-pane-custom">
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+          <div class="row align-items-center">
+            <div class="col-md-4">
+              <label class="form-label small fw-bold">Select Customer</label>
+              <select class="form-select form-select-sm" id="ledgerCustomerSelect" onchange="renderCustomerLedger()">
+                <option value="Haji Crockery Murree">Haji Crockery Murree</option>
+                <option value="Bismillah Traders Rawalpindi">Bismillah Traders Rawalpindi</option>
+                <option value="Al-Madina Crockery Store">Al-Madina Crockery Store</option>
               </select>
             </div>
-            <div class=col-md-8 text-end>
-              <button class=btn btn-outline-secondary btn-sm onclick=window.print()><i class=bi bi-printer></i> Print Statement</button>
+            <div class="col-md-8 text-end">
+              <button class="btn btn-outline-secondary btn-sm" onclick="window.print()"><i class="bi bi-printer"></i> Print Statement</button>
             </div>
           </div>
         </div>
       </div>
-      <div class=card border-0 shadow-sm>
-        <div class=card-header bg-white fw-bold py-3 d-flex justify-content-between>
-          <span id=custLedgerTitle>Customer Statement</span>
-          <span class=badge bg-warning text-dark id=custLedgerBalance>Balance: PKR 0</span>
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white fw-bold py-3 d-flex justify-content-between">
+          <span id="custLedgerTitle">Customer Statement</span>
+          <span class="badge bg-warning text-dark" id="custLedgerBalance">Balance: PKR 0</span>
         </div>
-        <div class=card-body p-0>
-          <div class=table-responsive>
-            <table class=table table-hover align-middle mb-0>
-              <thead class=table-light small>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light small">
                 <tr>
                   <th>Date</th>
                   <th>Ref # / Description</th>
@@ -448,7 +368,7 @@
                   <th>Running Balance</th>
                 </tr>
               </thead>
-              <tbody id=custLedgerBody></tbody>
+              <tbody id="custLedgerBody"></tbody>
             </table>
           </div>
         </div>
@@ -456,33 +376,33 @@
     </div>
 
     <!-- TAB 6: SUPPLIER LEDGER -->
-    <div id=tab-supplier-ledger class=tab-pane-custom d-none>
-      <div class=card border-0 shadow-sm mb-4>
-        <div class=card-body>
-          <div class=row align-items-center>
-            <div class=col-md-4>
-              <label class=form-label small fw-bold>Select Supplier</label>
-              <select class=form-select form-select-sm id=ledgerSupplierSelect onchange=renderSupplierLedger()>
-                <option value=Royal Crockery Karachi>Royal Crockery Karachi</option>
-                <option value=Gujranwala Ceramics Factory>Gujranwala Ceramics Factory</option>
-                <option value=China Glassware Importers>China Glassware Importers</option>
+    <div id="tab-supplier-ledger" class="tab-pane-custom">
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+          <div class="row align-items-center">
+            <div class="col-md-4">
+              <label class="form-label small fw-bold">Select Supplier</label>
+              <select class="form-select form-select-sm" id="ledgerSupplierSelect" onchange="renderSupplierLedger()">
+                <option value="Royal Crockery Karachi">Royal Crockery Karachi</option>
+                <option value="Gujranwala Ceramics Factory">Gujranwala Ceramics Factory</option>
+                <option value="China Glassware Importers">China Glassware Importers</option>
               </select>
             </div>
-            <div class=col-md-8 text-end>
-              <button class=btn btn-outline-secondary btn-sm onclick=window.print()><i class=bi bi-printer></i> Print Statement</button>
+            <div class="col-md-8 text-end">
+              <button class="btn btn-outline-secondary btn-sm" onclick="window.print()"><i class="bi bi-printer"></i> Print Statement</button>
             </div>
           </div>
         </div>
       </div>
-      <div class=card border-0 shadow-sm>
-        <div class=card-header bg-white fw-bold py-3 d-flex justify-content-between>
-          <span id=suppLedgerTitle>Supplier Statement</span>
-          <span class=badge bg-danger id=suppLedgerBalance>Balance: PKR 0</span>
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white fw-bold py-3 d-flex justify-content-between">
+          <span id="suppLedgerTitle">Supplier Statement</span>
+          <span class="badge bg-danger" id="suppLedgerBalance">Balance: PKR 0</span>
         </div>
-        <div class=card-body p-0>
-          <div class=table-responsive>
-            <table class=table table-hover align-middle mb-0>
-              <thead class=table-light small>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light small">
                 <tr>
                   <th>Date</th>
                   <th>Ref # / Description</th>
@@ -491,7 +411,7 @@
                   <th>Running Balance</th>
                 </tr>
               </thead>
-              <tbody id=suppLedgerBody></tbody>
+              <tbody id="suppLedgerBody"></tbody>
             </table>
           </div>
         </div>
@@ -499,51 +419,51 @@
     </div>
 
     <!-- TAB 7: EXPENSES -->
-    <div id=tab-expenses class=tab-pane-custom d-none>
-      <div class=card border-0 shadow-sm mb-4>
-        <div class=card-header bg-white fw-bold py-3>Record Business Expense</div>
-        <div class=card-body>
-          <form id=expenseForm onsubmit=handleNewExpense(event)>
-            <div class=row g-3>
-              <div class=col-md-3>
-                <label class=form-label small fw-bold>Expense Head</label>
-                <select class=form-select form-select-sm id=expCategory required>
-                  <option value=Shop Rent>Shop Rent</option>
-                  <option value=Electricity Bill>Electricity Bill</option>
-                  <option value=Labor & Wages>Labor & Wages</option>
-                  <option value=Freight & Carriage>Freight & Carriage</option>
-                  <option value=Tea & Refreshment>Tea & Refreshment</option>
-                  <option value=Packaging Material>Packaging Material</option>
+    <div id="tab-expenses" class="tab-pane-custom">
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white fw-bold py-3">Record Business Expense</div>
+        <div class="card-body">
+          <form id="expenseForm" onsubmit="handleNewExpense(event)">
+            <div class="row g-3">
+              <div class="col-md-3">
+                <label class="form-label small fw-bold">Expense Head</label>
+                <select class="form-select form-select-sm" id="expCategory" required>
+                  <option value="Shop Rent">Shop Rent</option>
+                  <option value="Electricity Bill">Electricity Bill</option>
+                  <option value="Labor & Wages">Labor & Wages</option>
+                  <option value="Freight & Carriage">Freight & Carriage</option>
+                  <option value="Tea & Refreshment">Tea & Refreshment</option>
+                  <option value="Packaging Material">Packaging Material</option>
                 </select>
               </div>
-              <div class=col-md-3>
-                <label class=form-label small fw-bold>Paid To / Description</label>
-                <input type=text class=form-control form-control-sm id=expDesc placeholder=e.g. Shop monthly rent required>
+              <div class="col-md-3">
+                <label class="form-label small fw-bold">Paid To / Description</label>
+                <input type="text" class="form-control form-control-sm" id="expDesc" placeholder="e.g. Shop monthly rent" required>
               </div>
-              <div class=col-md-3>
-                <label class=form-label small fw-bold>Account</label>
-                <select class=form-select form-select-sm id=expAccount>
-                  <option value=Cash in Hand>Cash in Hand</option>
-                  <option value=Main Bank Account>Main Bank Account</option>
+              <div class="col-md-3">
+                <label class="form-label small fw-bold">Account</label>
+                <select class="form-select form-select-sm" id="expAccount">
+                  <option value="Cash in Hand">Cash in Hand</option>
+                  <option value="Main Bank Account">Main Bank Account</option>
                 </select>
               </div>
-              <div class=col-md-3>
-                <label class=form-label small fw-bold>Amount (PKR)</label>
-                <input type=number class=form-control form-control-sm id=expAmount min=1 required>
+              <div class="col-md-3">
+                <label class="form-label small fw-bold">Amount (PKR)</label>
+                <input type="number" class="form-control form-control-sm" id="expAmount" min="1" required>
               </div>
-              <div class=col-12 text-end>
-                <button type=submit class=btn btn-danger btn-sm><i class=bi bi-wallet2></i> Record Expense</button>
+              <div class="col-12 text-end">
+                <button type="submit" class="btn btn-danger btn-sm"><i class="bi bi-wallet2"></i> Record Expense</button>
               </div>
             </div>
           </form>
         </div>
       </div>
-      <div class=card border-0 shadow-sm>
-        <div class=card-header bg-white fw-bold py-3>Expense Register</div>
-        <div class=card-body p-0>
-          <div class=table-responsive>
-            <table class=table table-hover align-middle mb-0>
-              <thead class=table-light small>
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white fw-bold py-3">Expense Register</div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light small">
                 <tr>
                   <th>Voucher #</th>
                   <th>Date</th>
@@ -553,7 +473,7 @@
                   <th>Amount</th>
                 </tr>
               </thead>
-              <tbody id=expenseTableBody></tbody>
+              <tbody id="expenseTableBody"></tbody>
             </table>
           </div>
         </div>
@@ -561,16 +481,16 @@
     </div>
 
     <!-- TAB 8: STOCK -->
-    <div id=tab-stock class=tab-pane-custom d-none>
-      <div class=card border-0 shadow-sm>
-        <div class=card-header bg-white fw-bold py-3 d-flex justify-content-between align-items-center>
+    <div id="tab-stock" class="tab-pane-custom">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white fw-bold py-3 d-flex justify-content-between align-items-center">
           <span>Crockery Stock Status & Valuation</span>
-          <button class=btn btn-outline-danger btn-sm onclick=recordBreakagePrompt()><i class=bi bi-slash-circle></i> Write Off Breakage</button>
+          <button class="btn btn-outline-danger btn-sm" onclick="recordBreakagePrompt()"><i class="bi bi-slash-circle"></i> Write Off Breakage</button>
         </div>
-        <div class=card-body p-0>
-          <div class=table-responsive>
-            <table class=table table-hover align-middle mb-0>
-              <thead class=table-light small>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light small">
                 <tr>
                   <th>Product Name</th>
                   <th>Category</th>
@@ -582,7 +502,7 @@
                   <th>Status</th>
                 </tr>
               </thead>
-              <tbody id=stockTableBody></tbody>
+              <tbody id="stockTableBody"></tbody>
             </table>
           </div>
         </div>
@@ -590,67 +510,67 @@
     </div>
 
     <!-- TAB 9: CASH & BANK -->
-    <div id=tab-cash-bank class=tab-pane-custom d-none>
-      <div class=row g-3 mb-4>
-        <div class=col-md-6>
-          <div class=stat-card>
-            <div class=stat-label>Cash in Hand</div>
-            <div class=stat-val text-success id=cashInHandVal>PKR 0</div>
-            <small class=text-muted>Shop drawer cash</small>
+    <div id="tab-cash-bank" class="tab-pane-custom">
+      <div class="row g-3 mb-4">
+        <div class="col-md-6">
+          <div class="stat-card">
+            <div class="stat-label">Cash in Hand</div>
+            <div class="stat-val text-success" id="cashInHandVal">PKR 0</div>
+            <small class="text-muted">Shop drawer cash</small>
           </div>
         </div>
-        <div class=col-md-6>
-          <div class=stat-card>
-            <div class=stat-label>Main Bank Account</div>
-            <div class=stat-val text-primary id=bankAccountVal>PKR 0</div>
-            <small class=text-muted>Commercial bank balance</small>
+        <div class="col-md-6">
+          <div class="stat-card">
+            <div class="stat-label">Main Bank Account</div>
+            <div class="stat-val text-primary" id="bankAccountVal">PKR 0</div>
+            <small class="text-muted">Commercial bank balance</small>
           </div>
         </div>
       </div>
     </div>
 
     <!-- TAB 10: DRAWINGS -->
-    <div id=tab-drawings class=tab-pane-custom d-none>
-      <div class=card border-0 shadow-sm mb-4>
-        <div class=card-header bg-white fw-bold py-3>Record Partner Drawing</div>
-        <div class=card-body>
-          <form id=drawingForm onsubmit=handleNewDrawing(event)>
-            <div class=row g-3>
-              <div class=col-md-3>
-                <label class=form-label small fw-bold>Partner</label>
-                <select class=form-select form-select-sm id=drwPartner required>
-                  <option value=Partner 1>Partner 1</option>
-                  <option value=Partner 2>Partner 2</option>
+    <div id="tab-drawings" class="tab-pane-custom">
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white fw-bold py-3">Record Partner Drawing</div>
+        <div class="card-body">
+          <form id="drawingForm" onsubmit="handleNewDrawing(event)">
+            <div class="row g-3">
+              <div class="col-md-3">
+                <label class="form-label small fw-bold">Partner</label>
+                <select class="form-select form-select-sm" id="drwPartner" required>
+                  <option value="Partner 1">Partner 1</option>
+                  <option value="Partner 2">Partner 2</option>
                 </select>
               </div>
-              <div class=col-md-3>
-                <label class=form-label small fw-bold>Account</label>
-                <select class=form-select form-select-sm id=drwAccount>
-                  <option value=Cash in Hand>Cash in Hand</option>
-                  <option value=Main Bank Account>Main Bank Account</option>
+              <div class="col-md-3">
+                <label class="form-label small fw-bold">Account</label>
+                <select class="form-select form-select-sm" id="drwAccount">
+                  <option value="Cash in Hand">Cash in Hand</option>
+                  <option value="Main Bank Account">Main Bank Account</option>
                 </select>
               </div>
-              <div class=col-md-3>
-                <label class=form-label small fw-bold>Remarks</label>
-                <input type=text class=form-control form-control-sm id=drwRemarks placeholder=Household withdrawal required>
+              <div class="col-md-3">
+                <label class="form-label small fw-bold">Remarks</label>
+                <input type="text" class="form-control form-control-sm" id="drwRemarks" placeholder="Household withdrawal" required>
               </div>
-              <div class=col-md-3>
-                <label class=form-label small fw-bold>Amount (PKR)</label>
-                <input type=number class=form-control form-control-sm id=drwAmount min=1 required>
+              <div class="col-md-3">
+                <label class="form-label small fw-bold">Amount (PKR)</label>
+                <input type="number" class="form-control form-control-sm" id="drwAmount" min="1" required>
               </div>
-              <div class=col-12 text-end>
-                <button type=submit class=btn btn-warning btn-sm text-dark><i class=bi bi-cash-stack></i> Record Drawing</button>
+              <div class="col-12 text-end">
+                <button type="submit" class="btn btn-warning btn-sm text-dark"><i class="bi bi-cash-stack"></i> Record Drawing</button>
               </div>
             </div>
           </form>
         </div>
       </div>
-      <div class=card border-0 shadow-sm>
-        <div class=card-header bg-white fw-bold py-3>Drawings Register</div>
-        <div class=card-body p-0>
-          <div class=table-responsive>
-            <table class=table table-hover align-middle mb-0>
-              <thead class=table-light small>
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white fw-bold py-3">Drawings Register</div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light small">
                 <tr>
                   <th>Voucher #</th>
                   <th>Date</th>
@@ -660,7 +580,7 @@
                   <th>Remarks</th>
                 </tr>
               </thead>
-              <tbody id=drawingsTableBody></tbody>
+              <tbody id="drawingsTableBody"></tbody>
             </table>
           </div>
         </div>
@@ -668,13 +588,13 @@
     </div>
 
     <!-- TAB 11: MONTHLY PROFIT -->
-    <div id=tab-monthly-profit class=tab-pane-custom d-none>
-      <div class=card border-0 shadow-sm mb-4>
-        <div class=card-header bg-white fw-bold py-3>Monthly Profit & 50/50 Sharing Summary</div>
-        <div class=card-body>
-          <div class=table-responsive>
-            <table class=table table-bordered align-middle text-center>
-              <thead class=table-dark>
+    <div id="tab-monthly-profit" class="tab-pane-custom">
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white fw-bold py-3">Monthly Profit & 50/50 Sharing Summary</div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-bordered align-middle text-center">
+              <thead class="table-dark">
                 <tr>
                   <th>Period</th>
                   <th>Sales Revenue</th>
@@ -686,557 +606,79 @@
                   <th>Partner 2 (50%)</th>
                 </tr>
               </thead>
-              <tbody id=monthlyProfitBody></tbody>
+              <tbody id="monthlyProfitBody"></tbody>
             </table>
           </div>
         </div>
       </div>
     </div>
+
   </main>
 </div>
 
 <!-- Modal: Printable Invoice -->
-<div class=modal fade id=invoiceModal tabindex=-1>
-  <div class=modal-dialog modal-lg>
-    <div class=modal-content>
-      <div class=modal-header>
-        <h5 class=modal-title fw-bold><i class=bi bi-receipt></i> Wholesale Invoice Preview</h5>
-        <button type=button class=btn-close data-bs-dismiss=modal></button>
+<div class="modal fade" id="invoiceModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold"><i class="bi bi-receipt"></i> Wholesale Invoice Preview</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-      <div class=modal-body p-4 id=printableInvoiceArea>
-        <div class=d-flex justify-content-between border-bottom pb-3 mb-3>
+      <div class="modal-body p-4" id="printableInvoiceArea">
+        <div class="d-flex justify-content-between border-bottom pb-3 mb-3">
           <div>
-            <h4 class=fw-bold text-primary mb-0>ROYAL ENTERPRISES</h4>
-            <div class=small text-muted>Wholesale Crockery Merchants & Importers</div>
-            <div class=small text-muted>Phone: +92 300 1234567 | Address: Wholesale Market, Murree / Rawalpindi</div>
+            <h4 class="fw-bold text-primary mb-0">ROYAL ENTERPRISES</h4>
+            <div class="small text-muted">Wholesale Crockery Merchants & Importers</div>
+            <div class="small text-muted">Phone: +92 300 1234567 | Address: Wholesale Market, Murree / Rawalpindi</div>
           </div>
-          <div class=text-end>
-            <h5 class=fw-bold text-danger id=invNoModal>INV-20261001-001</h5>
-            <div class=small text-muted id=invDateModal>Date: 2026-10-01</div>
+          <div class="text-end">
+            <h5 class="fw-bold text-danger" id="invNoModal">INV-20261001-001</h5>
+            <div class="small text-muted" id="invDateModal">Date: 2026-10-01</div>
           </div>
         </div>
-        <div class=mb-3>
-          <strong>Bill To Customer:</strong> <span id=invCustModal>Haji Crockery Murree</span>
+        <div class="mb-3">
+          <strong>Bill To Customer:</strong> <span id="invCustModal">Haji Crockery Murree</span>
         </div>
-        <table class=table table-bordered mb-3>
-          <thead class=table-light small>
+        <table class="table table-bordered mb-3">
+          <thead class="table-light small">
             <tr>
               <th>Item Description</th>
-              <th class=text-center>Quantity</th>
-              <th class=text-end>Wholesale Rate</th>
-              <th class=text-end>Total Amount</th>
+              <th class="text-center">Quantity</th>
+              <th class="text-end">Wholesale Rate</th>
+              <th class="text-end">Total Amount</th>
             </tr>
           </thead>
-          <tbody id=invItemsModal></tbody>
+          <tbody id="invItemsModal"></tbody>
           <tfoot>
             <tr>
-              <th colspan=3 class=text-end>Total Invoice Amount:</th>
-              <th class=text-end id=invTotalModal>PKR 0</th>
+              <th colspan="3" class="text-end">Total Invoice Amount:</th>
+              <th class="text-end" id="invTotalModal">PKR 0</th>
             </tr>
             <tr>
-              <th colspan=3 class=text-end>Cash Received:</th>
-              <th class=text-end id=invRecModal>PKR 0</th>
+              <th colspan="3" class="text-end">Cash Received:</th>
+              <th class="text-end" id="invRecModal">PKR 0</th>
             </tr>
             <tr>
-              <th colspan=3 class=text-end>Balance (Receivable):</th>
-              <th class=text-end text-danger id=invBalModal>PKR 0</th>
+              <th colspan="3" class="text-end">Balance (Receivable):</th>
+              <th class="text-end text-danger" id="invBalModal">PKR 0</th>
             </tr>
           </tfoot>
         </table>
-        <div class=d-flex justify-content-between mt-5 pt-4 text-center small text-muted>
-          <div style=border-top: 1px solid #999; width: 150px;>Prepared By</div>
-          <div style=border-top: 1px solid #999; width: 150px;>Customer Signature</div>
-          <div style=border-top: 1px solid #999; width: 150px;>Partner Approval</div>
+        <div class="d-flex justify-content-between mt-5 pt-4 text-center small text-muted">
+          <div style="border-top: 1px solid #999; width: 150px;">Prepared By</div>
+          <div style="border-top: 1px solid #999; width: 150px;">Customer Signature</div>
+          <div style="border-top: 1px solid #999; width: 150px;">Partner Approval</div>
         </div>
       </div>
-      <div class=modal-footer>
-        <button type=button class=btn btn-secondary btn-sm data-bs-dismiss=modal>Close</button>
-        <button type=button class=btn btn-primary btn-sm onclick=window.print()><i class=bi bi-printer></i> Print Invoice</button>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="window.print()"><i class="bi bi-printer"></i> Print Invoice</button>
       </div>
     </div>
   </div>
 </div>
 
-<script src=https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js></script>
-<script>
-  const defaultProducts = [
-    { id: 1, name: 'Dinner Set 72-Pcs Fine Bone China', category: 'Dinner Sets', unit: 'Set', stock: 45, costRate: 14500, saleRate: 18500 },
-    { id: 2, name: 'Tea Set 24-Pcs Royal Gold Rim', category: 'Tea Sets', unit: 'Set', stock: 60, costRate: 4800, saleRate: 6500 },
-    { id: 3, name: 'Ceramic Bowls 6-Pcs Floral', category: 'Bowls', unit: 'Box', stock: 120, costRate: 1200, saleRate: 1750 },
-    { id: 4, name: 'Stainless Steel Hot Pot Trio Set', category: 'Hot Pots', unit: 'Set', stock: 35, costRate: 5200, saleRate: 7200 },
-    { id: 5, name: 'Water Glass Set 6-Pcs Turkish Design', category: 'Glassware', unit: 'Box', stock: 150, costRate: 850, saleRate: 1300 },
-    { id: 6, name: 'Melamine Serving Tray Set of 3', category: 'Trays', unit: 'Set', stock: 80, costRate: 1600, saleRate: 2300 }
-  ];
-
-  let appState = {
-    products: JSON.parse(JSON.stringify(defaultProducts)),
-    sales: [
-      { id: 'INV-20261001-0001', date: '2026-10-01', customer: 'Haji Crockery Murree', item: 'Dinner Set 72-Pcs Fine Bone China', qty: 4, saleRate: 18500, costRate: 14500, totalSale: 74000, totalCost: 58000, profit: 16000, received: 50000, balance: 24000 },
-      { id: 'INV-20261001-0002', date: '2026-10-01', customer: 'Bismillah Traders Rawalpindi', item: 'Tea Set 24-Pcs Royal Gold Rim', qty: 6, saleRate: 6500, costRate: 4800, totalSale: 39000, totalCost: 28800, profit: 10200, received: 39000, balance: 0 }
-    ],
-    purchases: [
-      { id: 'PUR-20261001-0001', date: '2026-10-01', supplier: 'Royal Crockery Karachi', item: 'Dinner Set 72-Pcs Fine Bone China', qty: 20, costRate: 14500, total: 290000 },
-      { id: 'PUR-20261001-0002', date: '2026-10-01', supplier: 'Gujranwala Ceramics Factory', item: 'Ceramic Bowls 6-Pcs Floral', qty: 50, costRate: 1200, total: 60000 }
-    ],
-    expenses: [
-      { id: 'EXP-001', date: '2026-10-01', category: 'Shop Rent', desc: 'Shop monthly rent payment', account: 'Main Bank Account', amount: 35000 },
-      { id: 'EXP-002', date: '2026-10-01', category: 'Labor & Wages', desc: 'Unloading crockery containers', account: 'Cash in Hand', amount: 8000 },
-      { id: 'EXP-003', date: '2026-10-01', category: 'Tea & Refreshment', desc: 'Customer & staff daily tea', account: 'Cash in Hand', amount: 1500 }
-    ],
-    drawings: [
-      { id: 'DRW-001', date: '2026-10-01', partner: 'Partner 1', account: 'Cash in Hand', amount: 15000, remarks: 'Household withdrawal' },
-      { id: 'DRW-002', date: '2026-10-01', partner: 'Partner 2', account: 'Main Bank Account', amount: 15000, remarks: 'Personal expenses' }
-    ],
-    partners: [
-      { name: 'Partner 1', capital: 500000, current: 500000 },
-      { name: 'Partner 2', capital: 500000, current: 500000 }
-    ],
-    accounts: {
-      cash: 85500,
-      bank: 450000
-    }
-  };
-
-  if (localStorage.getItem('royalCrockeryDB')) {
-    try {
-      appState = JSON.parse(localStorage.getItem('royalCrockeryDB'));
-    } catch(e) {}
-  }
-
-  function saveDB() {
-    localStorage.setItem('royalCrockeryDB', JSON.stringify(appState));
-    renderAll();
-  }
-
-  function resetSampleData() {
-    if(confirm('Reset sample demo data?')) {
-      localStorage.removeItem('royalCrockeryDB');
-      location.reload();
-    }
-  }
-
-  function showTab(tabName) {
-    document.querySelectorAll('.tab-pane-custom').forEach(el => el.classList.add('d-none'));
-    document.querySelectorAll('.nav-item-link').forEach(el => el.classList.remove('active'));
-    
-    const target = document.getElementById('tab-' + tabName);
-    if(target) target.classList.remove('d-none');
-    
-    const links = document.querySelectorAll('.nav-item-link');
-    links.forEach(l => {
-      if(l.getAttribute('onclick') && l.getAttribute('onclick').includes(tabName)) {
-        l.classList.add('active');
-      }
-    });
-
-    const titleMap = {
-      'dashboard': 'Dashboard',
-      'partners': 'Partners Capital & Equity',
-      'purchases': 'Purchase Invoices & Inward Stock',
-      'sales': 'Wholesale Sales & Invoicing',
-      'customer-ledger': 'Customer Running Ledger',
-      'supplier-ledger': 'Supplier Running Ledger',
-      'expenses': 'Business Operating Expenses',
-      'stock': 'Stock Inventory & Valuation',
-      'cash-bank': 'Cash & Bank Book',
-      'drawings': 'Partner Personal Drawings',
-      'monthly-profit': 'Monthly Profit & 50/50 Sharing'
-    };
-    document.getElementById('pageTitle').innerText = titleMap[tabName] || 'Dashboard';
-  }
-
-  function renderAll() {
-    const purProd = document.getElementById('purProduct');
-    const saleProd = document.getElementById('saleProduct');
-    if(purProd) {
-      purProd.innerHTML = appState.products.map(p => <option value="> (Stock: )</option>).join('');
- updatePurCostRate();
- }
- if(saleProd) {
- saleProd.innerHTML = appState.products.map(p => <option value=> (Stock: )</option>).join('');
- updateSaleRates();
- }
-
- let totalSales = appState.sales.reduce((sum, s) => sum + s.totalSale, 0);
- let totalCOGS = appState.sales.reduce((sum, s) => sum + s.totalCost, 0);
- let grossProfit = totalSales - totalCOGS;
- let totalExp = appState.expenses.reduce((sum, e) => sum + e.amount, 0);
- let netProfit = grossProfit - totalExp;
- let receivables = appState.sales.reduce((sum, s) => sum + s.balance, 0);
- let payables = 145000;
- let stockVal = appState.products.reduce((sum, p) => sum + (p.stock * p.costRate), 0);
- let totalCashBank = appState.accounts.cash + appState.accounts.bank;
- let capitalPool = appState.partners.reduce((sum, p) => sum + p.capital, 0);
-
- document.getElementById('statSales').innerText = 'PKR ' + totalSales.toLocaleString();
- document.getElementById('statGrossProfit').innerText = 'PKR ' + grossProfit.toLocaleString();
- document.getElementById('statNetProfit').innerText = 'PKR ' + netProfit.toLocaleString();
- document.getElementById('statCashBank').innerText = 'PKR ' + totalCashBank.toLocaleString();
- document.getElementById('statStockVal').innerText = 'PKR ' + stockVal.toLocaleString();
- document.getElementById('statReceivables').innerText = 'PKR ' + receivables.toLocaleString();
- document.getElementById('statPayables').innerText = 'PKR ' + payables.toLocaleString();
- document.getElementById('statCapitalPool').innerText = 'PKR ' + capitalPool.toLocaleString();
-
- let halfProfit = Math.floor(netProfit / 2);
- document.getElementById('dashP1Share').innerText = 'PKR ' + halfProfit.toLocaleString();
- document.getElementById('dashP2Share').innerText = 'PKR ' + halfProfit.toLocaleString();
-
- renderSalesTable();
- renderPurchasesTable();
- renderExpensesTable();
- renderStockTable();
- renderCashBankTable();
- renderDrawingsTable();
- renderCustomerLedger();
- renderSupplierLedger();
- renderMonthlyProfit(totalSales, totalCOGS, grossProfit, totalExp, netProfit, halfProfit);
- }
-
- function updatePurCostRate() {
- const selId = document.getElementById('purProduct').value;
- const p = appState.products.find(x => x.id == selId);
- if(p) {
- document.getElementById('purCostRate').value = p.costRate;
- calcPurTotal();
- }
- }
-
- function calcPurTotal() {
- const qty = parseInt(document.getElementById('purQty').value) || 0;
- const rate = parseFloat(document.getElementById('purCostRate').value) || 0;
- document.getElementById('purTotalDisplay').value = 'PKR ' + (qty * rate).toLocaleString();
- }
-
- function handleNewPurchase(e) {
- e.preventDefault();
- const selId = document.getElementById('purProduct').value;
- const p = appState.products.find(x => x.id == selId);
- const qty = parseInt(document.getElementById('purQty').value);
- const rate = parseFloat(document.getElementById('purCostRate').value);
- const total = qty * rate;
- const supplier = document.getElementById('purSupplier').value;
-
- p.stock += qty;
- appState.purchases.unshift({
- id: 'PUR-20261001-000' + (appState.purchases.length + 1),
- date: new Date().toISOString().split('T')[0],
- supplier: supplier,
- item: p.name,
- qty: qty,
- costRate: rate,
- total: total
- });
- saveDB();
- alert('Purchase recorded! Stock updated.');
- }
-
- function updateSaleRates() {
- const selId = document.getElementById('saleProduct').value;
- const p = appState.products.find(x => x.id == selId);
- if(p) {
- document.getElementById('saleRate').value = p.saleRate;
- calcSaleTotal();
- }
- }
-
- function calcSaleTotal() {
- const qty = parseInt(document.getElementById('saleQty').value) || 0;
- const rate = parseFloat(document.getElementById('saleRate').value) || 0;
- const total = qty * rate;
- document.getElementById('saleTotalDisplay').value = 'PKR ' + total.toLocaleString();
- const rec = parseFloat(document.getElementById('saleReceived').value) || 0;
- document.getElementById('saleBalanceDisplay').value = 'PKR ' + Math.max(0, total - rec).toLocaleString();
- }
-
- function handleNewSale(e) {
- e.preventDefault();
- const selId = document.getElementById('saleProduct').value;
- const p = appState.products.find(x => x.id == selId);
- const qty = parseInt(document.getElementById('saleQty').value);
- if(p.stock < qty) {
- alert('Insufficient stock! Available: ' + p.stock);
- return;
- }
- const saleRate = parseFloat(document.getElementById('saleRate').value);
- const totalSale = qty * saleRate;
- const totalCost = qty * p.costRate;
- const profit = totalSale - totalCost;
- const received = parseFloat(document.getElementById('saleReceived').value) || 0;
- const balance = Math.max(0, totalSale - received);
- const cust = document.getElementById('saleCustomer').value;
-
- p.stock -= qty;
- appState.accounts.cash += received;
-
- const newSale = {
- id: 'INV-20261001-000' + (appState.sales.length + 1),
- date: new Date().toISOString().split('T')[0],
- customer: cust,
- item: p.name,
- qty: qty,
- saleRate: saleRate,
- costRate: p.costRate,
- totalSale: totalSale,
- totalCost: totalCost,
- profit: profit,
- received: received,
- balance: balance
- };
- appState.sales.unshift(newSale);
- saveDB();
- previewInvoice(newSale.id);
- }
-
- function handleNewExpense(e) {
- e.preventDefault();
- const cat = document.getElementById('expCategory').value;
- const desc = document.getElementById('expDesc').value;
- const acc = document.getElementById('expAccount').value;
- const amt = parseFloat(document.getElementById('expAmount').value);
-
- if(acc === 'Cash in Hand') appState.accounts.cash -= amt;
- else appState.accounts.bank -= amt;
-
- appState.expenses.unshift({
- id: 'EXP-00' + (appState.expenses.length + 1),
- date: new Date().toISOString().split('T')[0],
- category: cat,
- desc: desc,
- account: acc,
- amount: amt
- });
- saveDB();
- alert('Expense recorded!');
- }
-
- function handleNewDrawing(e) {
- e.preventDefault();
- const part = document.getElementById('drwPartner').value;
- const acc = document.getElementById('drwAccount').value;
- const amt = parseFloat(document.getElementById('drwAmount').value);
- const rem = document.getElementById('drwRemarks').value;
-
- if(acc === 'Cash in Hand') appState.accounts.cash -= amt;
- else appState.accounts.bank -= amt;
-
- const p = appState.partners.find(x => x.name === part);
- if(p) p.current -= amt;
-
- appState.drawings.unshift({
- id: 'DRW-00' + (appState.drawings.length + 1),
- date: new Date().toISOString().split('T')[0],
- partner: part,
- account: acc,
- amount: amt,
- remarks: rem
- });
- saveDB();
- alert('Drawing recorded!');
- }
-
- function recordBreakagePrompt() {
- const pName = prompt('Enter Product ID (1-6):');
- const p = appState.products.find(x => x.id == pName);
- if(p) {
- const bQty = parseInt(prompt('Units broken/damaged? Available: ' + p.stock));
- if(bQty && bQty <= p.stock) {
- p.stock -= bQty;
- saveDB();
- alert('Stock updated! Deducted ' + bQty + ' units due to breakage.');
- }
- }
- }
-
- function renderSalesTable() {
- const tbody = document.getElementById('salesTableBody');
- const recent = document.getElementById('dashboardRecentSales');
- const rows = appState.sales.map(s => 
- <tr>
- <td class=fw-bold text-primary></td>
- <td></td>
- <td></td>
- <td></td>
- <td class=fw-bold>PKR </td>
- <td class=text-muted>PKR </td>
- <td class=text-success fw-bold>+PKR </td>
- <td class=text-info>PKR </td>
- <td class=>PKR </td>
- <td><button class=btn btn-sm btn-outline-primary py-0 px-1 onclick=previewInvoice('')><i class=bi bi-printer></i></button></td>
- </tr>
- ).join('');
- if(tbody) tbody.innerHTML = rows;
- if(recent) {
- recent.innerHTML = appState.sales.slice(0, 5).map(s => 
- <tr>
- <td class=fw-bold text-primary></td>
- <td></td>
- <td class=fw-bold>PKR </td>
- <td class=text-muted>PKR </td>
- <td class=text-success fw-bold>+PKR </td>
- <td><span class=badge ></span></td>
- </tr>
- ).join('');
- }
- }
-
- function renderPurchasesTable() {
- const tbody = document.getElementById('purchasesTableBody');
- if(!tbody) return;
- tbody.innerHTML = appState.purchases.map(p => 
- <tr>
- <td class=fw-bold text-primary></td>
- <td></td>
- <td></td>
- <td></td>
- <td></td>
- <td>PKR </td>
- <td class=fw-bold>PKR </td>
- </tr>
- ).join('');
- }
-
- function renderExpensesTable() {
- const tbody = document.getElementById('expenseTableBody');
- if(!tbody) return;
- tbody.innerHTML = appState.expenses.map(e => 
- <tr>
- <td class=fw-bold></td>
- <td></td>
- <td><span class=badge bg-secondary></span></td>
- <td></td>
- <td></td>
- <td class=fw-bold text-danger>PKR </td>
- </tr>
- ).join('');
- }
-
- function renderStockTable() {
- const tbody = document.getElementById('stockTableBody');
- if(!tbody) return;
- tbody.innerHTML = appState.products.map(p => 
- <tr>
- <td class=fw-bold></td>
- <td><span class=badge bg-light text-dark border></span></td>
- <td></td>
- <td class=fw-bold ></td>
- <td>PKR </td>
- <td>PKR </td>
- <td class=fw-bold text-primary>PKR </td>
- <td><span class=badge ></span></td>
- </tr>
- ).join('');
- }
-
- function renderCashBankTable() {
- document.getElementById('cashInHandVal').innerText = 'PKR ' + appState.accounts.cash.toLocaleString();
- document.getElementById('bankAccountVal').innerText = 'PKR ' + appState.accounts.bank.toLocaleString();
- }
-
- function renderDrawingsTable() {
- const tbody = document.getElementById('drawingsTableBody');
- if(!tbody) return;
- tbody.innerHTML = appState.drawings.map(d => 
- <tr>
- <td class=fw-bold></td>
- <td></td>
- <td><span class=badge bg-primary></span></td>
- <td></td>
- <td class=fw-bold text-danger>PKR </td>
- <td></td>
- </tr>
- ).join('');
- }
-
- function renderCustomerLedger() {
- const cust = document.getElementById('ledgerCustomerSelect').value;
- const tbody = document.getElementById('custLedgerBody');
- document.getElementById('custLedgerTitle').innerText = 'Statement: ' + cust;
- const cSales = appState.sales.filter(s => s.customer === cust);
- let runBal = 0;
- let html = '';
- cSales.forEach(s => {
- runBal += s.totalSale;
- html += <tr>
- <td></td>
- <td>Sale Invoice: ( x )</td>
- <td class=fw-bold>PKR </td>
- <td>-</td>
- <td class=fw-bold>PKR </td>
- </tr>;
- if(s.received > 0) {
- runBal -= s.received;
- html += <tr class=table-light>
- <td></td>
- <td>Cash Received against </td>
- <td>-</td>
- <td class=text-success fw-bold>PKR </td>
- <td class=fw-bold text-danger>PKR </td>
- </tr>;
- }
- });
- tbody.innerHTML = html || '<tr><td colspan=5 class=text-center py-3 text-muted>No transactions for this customer.</td></tr>';
- document.getElementById('custLedgerBalance').innerText = 'Balance: PKR ' + runBal.toLocaleString();
- }
-
- function renderSupplierLedger() {
- const supp = document.getElementById('ledgerSupplierSelect').value;
- const tbody = document.getElementById('suppLedgerBody');
- document.getElementById('suppLedgerTitle').innerText = 'Statement: ' + supp;
- const sPurchases = appState.purchases.filter(p => p.supplier === supp);
- let runBal = 0;
- let html = '';
- sPurchases.forEach(p => {
- runBal += p.total;
- html += <tr>
- <td></td>
- <td>Purchase Invoice: ( x )</td>
- <td>-</td>
- <td class=fw-bold>PKR </td>
- <td class=fw-bold text-danger>PKR </td>
- </tr>;
- });
- tbody.innerHTML = html || '<tr><td colspan=5 class=text-center py-3 text-muted>No transactions.</td></tr>';
- document.getElementById('suppLedgerBalance').innerText = 'Payable Balance: PKR ' + runBal.toLocaleString();
- }
-
- function renderMonthlyProfit(sales, cogs, gp, exp, np, half) {
- const tbody = document.getElementById('monthlyProfitBody');
- if(!tbody) return;
- tbody.innerHTML = 
- <tr class=fw-bold>
- <td>October 2026</td>
- <td class=text-primary>PKR </td>
- <td class=text-muted>PKR </td>
- <td class=text-success>PKR </td>
- <td class=text-danger>PKR </td>
- <td class=text-success fs-5>PKR </td>
- <td class=text-info>PKR </td>
- <td class=text-info>PKR </td>
- </tr>
- ;
- }
-
- function previewInvoice(invId) {
- const s = appState.sales.find(x => x.id === invId);
- if(!s) return;
- document.getElementById('invNoModal').innerText = s.id;
- document.getElementById('invDateModal').innerText = 'Date: ' + s.date;
- document.getElementById('invCustModal').innerText = s.customer;
- document.getElementById('invItemsModal').innerHTML = 
- <tr>
- <td><strong></strong></td>
- <td class=text-center></td>
- <td class=text-end>PKR </td>
- <td class=text-end fw-bold>PKR </td>
- </tr>
- ;
- document.getElementById('invTotalModal').innerText = 'PKR ' + s.totalSale.toLocaleString();
- document.getElementById('invRecModal').innerText = 'PKR ' + s.received.toLocaleString();
- document.getElementById('invBalModal').innerText = 'PKR ' + s.balance.toLocaleString();
- new bootstrap.Modal(document.getElementById('invoiceModal')).show();
- }
-
- renderAll();
-</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
